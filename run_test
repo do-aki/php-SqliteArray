@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(__FILE__) . '/lime.php';
+
+define('__RUN_TEST__', 1);
+$h = new lime_harness();
+$h->register('tests');
+$h->run();
+
