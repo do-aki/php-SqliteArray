@@ -27,13 +27,3 @@ $t->is_deeply($counter, count($ra), "count");
 $t->is_deeply($key_a, $key_ra, "key");
 $t->is_deeply($value_a, $value_ra, "value");
 
-
-$a = new SqliteArray(array('a','b','c'));
-foreach ($a as $k => &$v) {
-    var_dump(array($k, $v));
-    $v = "X" . $v;
-    var_dump(array($k, $v));
-
-}
-
-var_dump($a->toArray());
