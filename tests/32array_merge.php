@@ -6,7 +6,7 @@ $t = new lime_test();
 
 
 /**
- * array_merge –Í•íƒeƒXƒg
+ * array_merge æ¨¡å€£ãƒ†ã‚¹ãƒˆ
  *
  */
 $real_array = array();

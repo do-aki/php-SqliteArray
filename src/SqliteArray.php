@@ -27,95 +27,95 @@
  */
 
 /**
- * SQLite ¤òÍÑ¤¤¤¿ÇÛÎó¥¯¥é¥¹
+ * SQLite ã‚’ç”¨ã„ãŸé…åˆ—ã‚¯ãƒ©ã‚¹
  *
- * °ì»şÅª¤ÊÃ±°ì¤ÎSQLite¥Õ¥¡¥¤¥ë¤Ë½ñ¤­½Ğ¤¹¤è¤¦¤Ë¤Ê¤Ã¤Æ¤¤¤ë¡£
- * ´ğËÜÅª¤ÊÆ°ºî¤Ï PHP ¤Î array ¤òÌÏÊï¡£
+ * ä¸€æ™‚çš„ãªå˜ä¸€ã®SQLiteãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãå‡ºã™ã‚ˆã†ã«ãªã£ã¦ã„ã‚‹ã€‚
+ * åŸºæœ¬çš„ãªå‹•ä½œã¯ PHP ã® array ã‚’æ¨¡å€£ã€‚
  *
  * @author do_aki <do.hiroaki@gmail.com>
  */
 class SQLiteArray implements Countable, ArrayAccess, Iterator {
 
     /**
-     * @const string ¥Æ¡¼¥Ö¥ëÌ¾¤Ë¶¦ÄÌ¤·¤Æ¤Ä¤±¤ëÀÜÆ¬¸ì
+     * @const string ãƒ†ãƒ¼ãƒ–ãƒ«åã«å…±é€šã—ã¦ã¤ã‘ã‚‹æ¥é ­èª
      */
     const TABLE_PREFIX = 'a_';
 
     /**
-     * @var SqliteArray ¥ë¡¼¥È¥ª¥Ö¥¸¥§¥¯¥È¤òÊİ»ı¤¹¤ëÊÑ¿ô
-     *      ¥ë¡¼¥È¥ª¥Ö¥¸¥§¥¯¥È¤Ï¡¢½é¤á¤Æ SqliteArray ¤ò»È¤Ã¤¿¤È¤­¤ËÀ¸À®¤µ¤ì¡¢
-     *      ¥×¥í¥°¥é¥à¤Î½ªÎ»»ş¤Ë¸å»ÏËö¤ò¤¹¤ë¤¿¤á¤Î¥ª¥Ö¥¸¥§¥¯¥È
-     *      ¤³¤Î¥ª¥Ö¥¸¥§¥¯¥È¤Ë¤è¤ê¡¢¥ê¥½¡¼¥¹¤ÎÇË´ş¤¬¹Ô¤ï¤ì¤ë
+     * @var SqliteArray ãƒ«ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä¿æŒã™ã‚‹å¤‰æ•°
+     *      ãƒ«ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯ã€åˆã‚ã¦ SqliteArray ã‚’ä½¿ã£ãŸã¨ãã«ç”Ÿæˆã•ã‚Œã€
+     *      ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®çµ‚äº†æ™‚ã«å¾Œå§‹æœ«ã‚’ã™ã‚‹ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+     *      ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ã‚ˆã‚Šã€ãƒªã‚½ãƒ¼ã‚¹ã®ç ´æ£„ãŒè¡Œã‚ã‚Œã‚‹
      */
     private static $root_object;
 
     /**
-     * @var integer SQLite ÇÛÎó¤òÀ¸À®¤¹¤ëÅÙ¤Ë¥¤¥ó¥¯¥ê¥á¥ó¥È¤µ¤ì¤ë¥«¥¦¥ó¥¿¡£¥Æ¡¼¥Ö¥ëÌ¾¤ËÍøÍÑ¤µ¤ì¤ë¡£
+     * @var integer SQLite é…åˆ—ã‚’ç”Ÿæˆã™ã‚‹åº¦ã«ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã•ã‚Œã‚‹ã‚«ã‚¦ãƒ³ã‚¿ã€‚ãƒ†ãƒ¼ãƒ–ãƒ«åã«åˆ©ç”¨ã•ã‚Œã‚‹ã€‚
      */
     private static $object_counter = 0;
 
     /**
-     * @var PDO SQLite¤ËÀÜÂ³¤¹¤ë¤¿¤á¤Î PDO ¥ª¥Ö¥¸¥§¥¯¥È
+     * @var PDO SQLiteã«æ¥ç¶šã™ã‚‹ãŸã‚ã® PDO ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
      */
     private static $sqlite;
 
     /**
-     * @var string °ì»şÅª¤ËºîÀ®¤µ¤ì¤ë¥Õ¥¡¥¤¥ëÌ¾
+     * @var string ä¸€æ™‚çš„ã«ä½œæˆã•ã‚Œã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
      */
     private static $file_name;
 
     /**
-     * @var string °ì»ş¥Õ¥¡¥¤¥ë¤òºîÀ®¤¹¤ë¥Ç¥£¥ì¥¯¥È¥ê
+     * @var string ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
      */
     private static $temporary_directory;
 
     /**
-     * @var ¥Æ¡¼¥Ö¥ëÌ¾
+     * @var ãƒ†ãƒ¼ãƒ–ãƒ«å
      */
     private $table_name;
 
     /**
-     * @var integer ¼¡¤ËÁŞÆş¤µ¤ì¤ë¿ô»úÅº¤¨»ú
+     * @var integer æ¬¡ã«æŒ¿å…¥ã•ã‚Œã‚‹æ•°å­—æ·»ãˆå­—
      */
     private $current_index = 0;
 
     /**
-     * @var integer Êİ»ı¤·¤Æ¤¤¤ë¹àÌÜ¿ô
-     *         »È¤¦ÅÙ¡¢COUNT ¥¯¥¨¥ê¤òÅê¤²¤Æ¤âÎÉ¤¤¤±¤É¡¢¤è¤¯»È¤¦¤È»×¤¦¤Î¤Ç¥ª¥Ö¥¸¥§¥¯¥ÈÂ¦¤ËÊİ»ı¤¹¤ë
+     * @var integer ä¿æŒã—ã¦ã„ã‚‹é …ç›®æ•°
+     *         ä½¿ã†åº¦ã€COUNT ã‚¯ã‚¨ãƒªã‚’æŠ•ã’ã¦ã‚‚è‰¯ã„ã‘ã©ã€ã‚ˆãä½¿ã†ã¨æ€ã†ã®ã§ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå´ã«ä¿æŒã™ã‚‹
      */
     private $count = 0;
 
     /**
-     * @var PDOStatement ¥¤¥Æ¥ì¡¼¥¿¤È¤·¤ÆÍøÍÑ¤µ¤ì¤ë¥¹¥Æ¡¼¥È¥á¥ó¥È¥Ï¥ó¥É¥ë
+     * @var PDOStatement ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã¨ã—ã¦åˆ©ç”¨ã•ã‚Œã‚‹ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«
      */
     private $iterator;
 
     /**
-     * @var array ¥¤¥Æ¥ì¡¼¥·¥ç¥ó»ş¤Î¸½ºßÃÍ
+     * @var array ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³æ™‚ã®ç¾åœ¨å€¤
      */
     private $iterator_current;
 
     /**
-     * @var mixed ºÇ¸å¤Ë find ¤µ¤ì¤¿¥­¡¼¤òÊİ»ı
+     * @var mixed æœ€å¾Œã« find ã•ã‚ŒãŸã‚­ãƒ¼ã‚’ä¿æŒ
      */
     private $last_find_key;
 
     /**
-     * @var mixed ºÇ¸å¤Ë find ¤µ¤ì¤¿¥­¡¼¤ÎÃÍ¤òÊİ»ı
+     * @var mixed æœ€å¾Œã« find ã•ã‚ŒãŸã‚­ãƒ¼ã®å€¤ã‚’ä¿æŒ
      */
     private $last_find_value;
 
     /**
-     * ¥³¥ó¥¹¥È¥é¥¯¥¿
+     * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
      *
-     * @param array $array ½é´ü²½¤ËÍÑ¤¤¤ëÇÛÎó
+     * @param array $array åˆæœŸåŒ–ã«ç”¨ã„ã‚‹é…åˆ—
      *
      */
     public function __construct($array=null) {
         self::_prepareObject($this);
 
         if (!isset($this->table_name)) {
-            // ¥ë¡¼¥È¥ª¥Ö¥¸¥§¥¯¥È¤Î¥³¥ó¥¹¥È¥é¥¯¥¿
+            // ãƒ«ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
             if (!isset(self::$temporary_directory)) {
                 self::$temporary_directory = sys_get_temp_dir();
             }
@@ -126,7 +126,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
             return;
         }
 
-        // ÄÌ¾ï¥ª¥Ö¥¸¥§¥¯¥È¤Î¥³¥ó¥¹¥È¥é¥¯¥¿
+        // é€šå¸¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         self::$sqlite->exec("CREATE TABLE `{$this->table_name}` (`key` PRIMARY KEY, `value`)");
         if (isset($array) && is_array($array)) {
             foreach ($array as $key => $value) {
@@ -136,29 +136,29 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¥Ç¥¹¥È¥é¥¯¥¿
+     * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
      *
      * @return void
      */
     public function __destruct() {
         if (!isset($this->table_name)) {
-            // ¥À¥ß¡¼¥ª¥Ö¥¸¥§¥¯¥È¤Î¥Ç¥¹¥È¥é¥¯¥¿¡á¥×¥í¥°¥é¥à¤Î½ªÎ»
+            // ãƒ€ãƒŸãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ï¼ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®çµ‚äº†
             self::$sqlite = null;
             unlink(self::$file_name);
             self::$file_name = null;
             return;
         }
 
-        // ÄÌ¾ï¥ª¥Ö¥¸¥§¥¯¥È¤Î¥Ç¥¹¥È¥é¥¯¥¿
+        // é€šå¸¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         self::$sqlite->exec("DROP TABLE `{$this->table_name}`");
     }
 
     /**
-     * ÃÍ¤òÄÉ²Ã
-     *  $array[] = $value ¤òÌÏÊï
+     * å€¤ã‚’è¿½åŠ 
+     *  $array[] = $value ã‚’æ¨¡å€£
      *
      * @param mixed $value
-     * @return integer ÇÛÎó¤ÎÍ×ÁÇ¿ô
+     * @return integer é…åˆ—ã®è¦ç´ æ•°
      */
     public function push($value) {
         $this->_insert($this->_increaseIndex(), $value);
@@ -166,8 +166,8 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤òÀßÄê
-     *  $array[$key] = $value ¤òÌÏÊï
+     * å€¤ã‚’è¨­å®š
+     *  $array[$key] = $value ã‚’æ¨¡å€£
      *
      * @param mixed $key
      * @param mixed $value
@@ -185,7 +185,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¥­¡¼¤Î¤ß¤«¤é¤Ê¤ë SqliteArray ¤òÊÖ¤¹
+     * ã‚­ãƒ¼ã®ã¿ã‹ã‚‰ãªã‚‹ SqliteArray ã‚’è¿”ã™
      *
      * @return SqliteArray
      */
@@ -204,7 +204,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤Î¤ß¤«¤é¤Ê¤ë SqliteArray ¤òÊÖ¤¹
+     * å€¤ã®ã¿ã‹ã‚‰ãªã‚‹ SqliteArray ã‚’è¿”ã™
      *
      * @return SqliteArray
      */
@@ -222,7 +222,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤ò¼èÆÀ
+     * å€¤ã‚’å–å¾—
      *
      * @param mixed $key
      * @return mixed
@@ -238,25 +238,25 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤òºï½ü
+     * å€¤ã‚’å‰Šé™¤
      *
-     * SQLite ¤Ï¡¢ºï½ü¹Ô¤Ë¤Ä¤¤¤Æ¤Ïºï½ü¤µ¤ì¤¿¥Ş¡¼¥¯¤ò¤Ä¤±¤ë¤À¤±¤Ê¤Î¤Ç¡¢
-     * ¤³¤Î¸å¤ËÁŞÆş¤·¤¿¤È¤·¤Æ¤â½ç½ø¤¬ÌäÂê¤Ë¤Ê¤ë¤³¤È¤Ï¤Ê¤¤
-     * ¥ª¡¼¥È¥Ğ¥­¥å¡¼¥à¤Ï¡¢ÂÌÌÜ¡¢ÀäÂĞ.
+     * SQLite ã¯ã€å‰Šé™¤è¡Œã«ã¤ã„ã¦ã¯å‰Šé™¤ã•ã‚ŒãŸãƒãƒ¼ã‚¯ã‚’ã¤ã‘ã‚‹ã ã‘ãªã®ã§ã€
+     * ã“ã®å¾Œã«æŒ¿å…¥ã—ãŸã¨ã—ã¦ã‚‚é †åºãŒå•é¡Œã«ãªã‚‹ã“ã¨ã¯ãªã„
+     * ã‚ªãƒ¼ãƒˆãƒã‚­ãƒ¥ãƒ¼ãƒ ã¯ã€é§„ç›®ã€çµ¶å¯¾.
      *
      * @param $key
-     * @return boolean ºï½ü¤·¤¿¾ì¹ç
+     * @return boolean å‰Šé™¤ã—ãŸå ´åˆ
      */
     public function remove($key) {
         $this->_delete(self::_convertKey($key));
     }
 
     /**
-     * array_merge ¤ÎµóÆ°¤òÌÏÊï
-     * Ã¢¤·¡¢ÇË²õÅª
+     * array_merge ã®æŒ™å‹•ã‚’æ¨¡å€£
+     * ä½†ã—ã€ç ´å£Šçš„
      *
      * @param $array
-     * @return SqliteArray ¼«¿È¤òÊÖ¤¹
+     * @return SqliteArray è‡ªèº«ã‚’è¿”ã™
      */
     public function merge($array) {
         foreach ($array as $key => $value) {
@@ -271,8 +271,8 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * + ±é»»»Ò¤ÎµóÆ°¤òÌÏÊï
-     * Ã¢¤·¡¢ÇË²õÅª
+     * + æ¼”ç®—å­ã®æŒ™å‹•ã‚’æ¨¡å€£
+     * ä½†ã—ã€ç ´å£Šçš„
      *
      * @param $array
      * @return void
@@ -286,13 +286,13 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤ÇÇÛÎó¤ò¸¡º÷¤·¡¢¸«¤Ä¤«¤Ã¤¿¾ì¹ç¡¢ÂĞ±ş¤¹¤ë¥­¡¼¤òÊÖ¤¹
+     * å€¤ã§é…åˆ—ã‚’æ¤œç´¢ã—ã€è¦‹ã¤ã‹ã£ãŸå ´åˆã€å¯¾å¿œã™ã‚‹ã‚­ãƒ¼ã‚’è¿”ã™
      *
-     * array_search ¤ÎÌÏÊï
-     * Ã¢¤·¡¢ strict¸¡º÷¤Î¤ß¤·¤«¹Ô¤¨¤Ê¤¤
+     * array_search ã®æ¨¡å€£
+     * ä½†ã—ã€ strictæ¤œç´¢ã®ã¿ã—ã‹è¡Œãˆãªã„
      *
      * @param $value
-     * @return mixed ÇÛÎó¤Î¥­¡¼¤Ş¤¿¤Ï false
+     * @return mixed é…åˆ—ã®ã‚­ãƒ¼ã¾ãŸã¯ false
      */
     public function searchValue($value) {
         $sql = "SELECT `key` FROM `{$this->table_name}` WHERE `value` = ? LIMIT 1";
@@ -306,10 +306,10 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¥­¡¼¤ò´ğ½à¤Ë¡¢¶¦ÄÌ¤¹¤ë¹àÌÜ¤ÎSQLite ÇÛÎó¤òÊÖ¤¹
+     * ã‚­ãƒ¼ã‚’åŸºæº–ã«ã€å…±é€šã™ã‚‹é …ç›®ã®SQLite é…åˆ—ã‚’è¿”ã™
      *
-     * array_intersect_key ¤Ã¤İ¤¤¤â¤Î
-     * ÈóÇË²õ¡£
+     * array_intersect_key ã£ã½ã„ã‚‚ã®
+     * éç ´å£Šã€‚
      *
      * @param SqliteArray or array $rhs
      * @return SqliteArray
@@ -324,8 +324,8 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * SQLiteÇÛÎó¤ÎÃæ¿È¡Ê¥Æ¡¼¥Ö¥ë¡Ë¤ÎÁ´¤Æ¤ò array ¤Ë¤·¤ÆÊÖ¤¹
-     * ÎÌ¤¬Â¿¤¤¾ì¹ç¤Ï¥á¥â¥ê¤Ë¾è¤êÀÚ¤é¤Ê¤¤²ÄÇ½À­¤â¤¢¤ë¤Î¤ÇÃí°Õ
+     * SQLiteé…åˆ—ã®ä¸­èº«ï¼ˆãƒ†ãƒ¼ãƒ–ãƒ«ï¼‰ã®å…¨ã¦ã‚’ array ã«ã—ã¦è¿”ã™
+     * é‡ãŒå¤šã„å ´åˆã¯ãƒ¡ãƒ¢ãƒªã«ä¹—ã‚Šåˆ‡ã‚‰ãªã„å¯èƒ½æ€§ã‚‚ã‚ã‚‹ã®ã§æ³¨æ„
      *
      * @return array
      */
@@ -340,7 +340,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * toArray ¤ÎÊÌÌ¾
+     * toArray ã®åˆ¥å
      *
      * @return array
      */
@@ -349,10 +349,10 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * LoadFile ¤ÇÉü¸µ¤Ç¤­¤ë¤è¤¦¤Ë¥Õ¥¡¥¤¥ë¤ËÊİÂ¸
+     * LoadFile ã§å¾©å…ƒã§ãã‚‹ã‚ˆã†ã«ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
      *
-     * @param $file_name  ÊİÂ¸Àè¥Õ¥¡¥¤¥ëÌ¾
-     * @param $table_name ÊİÂ¸Àè¥Æ¡¼¥Ö¥ëÌ¾¡ÊÇ¤°Õ¡Ë
+     * @param $file_name  ä¿å­˜å…ˆãƒ•ã‚¡ã‚¤ãƒ«å
+     * @param $table_name ä¿å­˜å…ˆãƒ†ãƒ¼ãƒ–ãƒ«åï¼ˆä»»æ„ï¼‰
      * @return void
      */
     public function saveFile($file_name, $table_name=__CLASS__) {
@@ -373,10 +373,10 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * SaveFile ¤ÇÊİÂ¸¤·¤¿¥Õ¥¡¥¤¥ë¤«¤éÉü¸µ
+     * SaveFile ã§ä¿å­˜ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å¾©å…ƒ
      *
-     * @param $file_name   ÊİÂ¸¤µ¤ì¤Æ¤¤¤ë¥Õ¥¡¥¤¥ëÌ¾
-     * @param $table_name  ÊİÂ¸Àè¥Æ¡¼¥Ö¥ëÌ¾¡ÊSaveFile ¥á¥½¥Ã¥É¤Ç»ØÄê¤·¤¿¾ì¹ç¤ÏÉ¬Í×¡Ë
+     * @param $file_name   ä¿å­˜ã•ã‚Œã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
+     * @param $table_name  ä¿å­˜å…ˆãƒ†ãƒ¼ãƒ–ãƒ«åï¼ˆSaveFile ãƒ¡ã‚½ãƒƒãƒ‰ã§æŒ‡å®šã—ãŸå ´åˆã¯å¿…è¦ï¼‰
      * @return void
      */
     public function loadFile($file_name, $table_name=__CLASS__) {
@@ -397,16 +397,16 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * Countable ¤Î¼ÂÁõ
+     * Countable ã®å®Ÿè£…
      *
-     * @return integer ÇÛÎóÍ×ÁÇ¿ô
+     * @return integer é…åˆ—è¦ç´ æ•°
      */
     public function count() {
         return $this->count;
     }
 
     /**
-     * ArrayAccess ¤Î¼ÂÁõ (Â¸ºß³ÎÇ§)
+     * ArrayAccess ã®å®Ÿè£… (å­˜åœ¨ç¢ºèª)
      *
      * @param $offset
      * @return mixed
@@ -417,7 +417,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ArrayAccess ¤Î¼ÂÁõ ¡ÊÃÍ¼èÆÀ¡Ë
+     * ArrayAccess ã®å®Ÿè£… ï¼ˆå€¤å–å¾—ï¼‰
      *
      * @param $offset
      * @return mixed
@@ -427,11 +427,11 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ArrayAccess ¤Î¼ÂÁõ ¡ÊÃÍÀßÄê¡Ë
+     * ArrayAccess ã®å®Ÿè£… ï¼ˆå€¤è¨­å®šï¼‰
      *
-     * $array[null] ¤â¡¢ $array[] ¤â ¶èÊÌ¤Ç¤­¤Ê¤¤(¤É¤Á¤é¤Î¾ì¹ç¤â¡¢$offset ¤Ï null ¤ÇÅÏ¤Ã¤Æ¤¯¤ë)
-     * ¥Í¥¤¥Æ¥£¥Ö array ¤ËÂĞ¤¹¤ë null Åº»ú¤Ï ¶õÊ¸»ú¤ÈÆ±µÁ¡£¤Ê¤Î¤Ç¡¢ $array[null] ¤Î¤È¤­¤À¤±¤Ï¥Í¥¤¥Æ¥£¥Ö array ¤ÈµóÆ°¤¬°Û¤Ê¤ë»ö¤ËÃí°Õ¡£
-     * º£¸å¤É¤¦¤Ê¤ë¤ó¤À¤í¤¦¤Í¤§¡£
+     * $array[null] ã‚‚ã€ $array[] ã‚‚ åŒºåˆ¥ã§ããªã„(ã©ã¡ã‚‰ã®å ´åˆã‚‚ã€$offset ã¯ null ã§æ¸¡ã£ã¦ãã‚‹)
+     * ãƒã‚¤ãƒ†ã‚£ãƒ– array ã«å¯¾ã™ã‚‹ null æ·»å­—ã¯ ç©ºæ–‡å­—ã¨åŒç¾©ã€‚ãªã®ã§ã€ $array[null] ã®ã¨ãã ã‘ã¯ãƒã‚¤ãƒ†ã‚£ãƒ– array ã¨æŒ™å‹•ãŒç•°ãªã‚‹äº‹ã«æ³¨æ„ã€‚
+     * ä»Šå¾Œã©ã†ãªã‚‹ã‚“ã ã‚ã†ã­ã‡ã€‚
      *
      * @param string $offset
      * @param mixed $value
@@ -446,7 +446,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ArrayAccess ¤Î¼ÂÁõ ¡ÊÃÍºï½ü¡Ë
+     * ArrayAccess ã®å®Ÿè£… ï¼ˆå€¤å‰Šé™¤ï¼‰
      *
      * @param string $offset
      * @return void
@@ -456,16 +456,16 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * Iterator ¤Î¼ÂÁõ(¸½ºß¤ÎÃÍ¤ò¼èÆÀ)
+     * Iterator ã®å®Ÿè£…(ç¾åœ¨ã®å€¤ã‚’å–å¾—)
      *
-     * @return mixed ¸½ºß¤ÎÃÍ
+     * @return mixed ç¾åœ¨ã®å€¤
      */
     public function current() {
         return unserialize($this->iterator_current['value']);
     }
 
     /**
-     * Iterator ¤Î¼ÂÁõ ¡Ê¥¤¥Æ¥ì¡¼¥¿¤ò¼¡¤Ø¿Ê¤á¤ë¡Ë
+     * Iterator ã®å®Ÿè£… ï¼ˆã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’æ¬¡ã¸é€²ã‚ã‚‹ï¼‰
      *
      * @return void
      */
@@ -474,18 +474,18 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * Iterator ¤Î¼ÂÁõ ¡Ê¸½ºß¤Î¥­¡¼¤ò¼èÆÀ¡Ë
+     * Iterator ã®å®Ÿè£… ï¼ˆç¾åœ¨ã®ã‚­ãƒ¼ã‚’å–å¾—ï¼‰
      *
-     * @return mixed ¸½ºß¤Î¥­¡¼
+     * @return mixed ç¾åœ¨ã®ã‚­ãƒ¼
      */
     public function key() {
         return self::_convertKey($this->iterator_current['key']);
     }
 
     /**
-     * Iterator ¤Î¼ÂÁõ ¡Ê¼¡¤Ë¼èÆÀ¤¹¤ëÃÍ¤¬Í­¸ú¤«¤É¤¦¤«¡Ë
+     * Iterator ã®å®Ÿè£… ï¼ˆæ¬¡ã«å–å¾—ã™ã‚‹å€¤ãŒæœ‰åŠ¹ã‹ã©ã†ã‹ï¼‰
      *
-     * @return boolean ¼¡¤Ë¼èÆÀ¤¹¤ëÃÍ¤¬Í­¸ú¤Ê¤é true, ¤½¤¦¤Ç¤Ê¤¤¤Ê¤é false
+     * @return boolean æ¬¡ã«å–å¾—ã™ã‚‹å€¤ãŒæœ‰åŠ¹ãªã‚‰ true, ãã†ã§ãªã„ãªã‚‰ false
      */
     public function valid() {
         if (!$this->iterator_current) {
@@ -497,7 +497,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * Iterator ¤Î¼ÂÁõ ¡Ê¥¤¥Æ¥ì¡¼¥¿¤òºÇ½é¤ËÌá¤¹¡Ë
+     * Iterator ã®å®Ÿè£… ï¼ˆã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’æœ€åˆã«æˆ»ã™ï¼‰
      */
     public function rewind() {
         if (isset($this->iterator)) {
@@ -509,11 +509,11 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /*
-     * °ì»ş¥Õ¥¡¥¤¥ë¤ò³ÊÇ¼¤¹¤ë¥Ç¥£¥ì¥¯¥È¥ê¤ò»ØÄê
+     * ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ ¼ç´ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’æŒ‡å®š
      *
-     * ºÇ½é¥³¥ó¥¹¥È¥é¥¯¥¿¤¬¼Â¹Ô¤µ¤ì¤ëÁ°¤Î¤ßÍ­¸ú
+     * æœ€åˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒå®Ÿè¡Œã•ã‚Œã‚‹å‰ã®ã¿æœ‰åŠ¹
      *
-     * @param string $dirname °ì»ş¥Õ¥¡¥¤¥ë¤ò³ÊÇ¼¤¹¤ë¥Ç¥£¥ì¥¯¥È¥ê
+     * @param string $dirname ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ ¼ç´ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
      * @return void
      */
     public static function setTemporaryDirectory($dirname) {
@@ -521,7 +521,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÂĞ SQLite ÇÛÎóÈÇ intersectKey
+     * å¯¾ SQLite é…åˆ—ç‰ˆ intersectKey
      *
      * @param SqliteArray $rhs
      * @return SqliteArray
@@ -539,7 +539,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÂĞ array ÈÇ intersectKey
+     * å¯¾ array ç‰ˆ intersectKey
      * @param array $rhs
      * @return SqliteArray
      */
@@ -562,11 +562,11 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¥¯¥¨¥ê¤Î¼Â¹Ô
+     * ã‚¯ã‚¨ãƒªã®å®Ÿè¡Œ
      *
-     * @param string $sql    ¼Â¹Ô¤¹¤ë¥¯¥¨¥ê
-     * @param array  $params ¥Ğ¥¤¥ó¥Ç¥£¥ó¥°¥Ñ¥é¥á¥¿
-     * @return PDOStatement ¼Â¹ÔºÑ¤ß¥¹¥Æ¡¼¥È¥á¥ó¥È¥Ï¥ó¥É¥ë
+     * @param string $sql    å®Ÿè¡Œã™ã‚‹ã‚¯ã‚¨ãƒª
+     * @param array  $params ãƒã‚¤ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ãƒ‘ãƒ©ãƒ¡ã‚¿
+     * @return PDOStatement å®Ÿè¡Œæ¸ˆã¿ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«
      */
     private function _executeQuery($sql, $params = null) {
         $sth = self::$sqlite->prepare($sql);
@@ -575,16 +575,16 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¼¡¤ËÁŞÆş¤¹¤Ù¤­¿ôÅº¤¨»ú¤òÊÖ¤·¤Æ¥¤¥ó¥¯¥ê¥á¥ó¥È
+     * æ¬¡ã«æŒ¿å…¥ã™ã¹ãæ•°æ·»ãˆå­—ã‚’è¿”ã—ã¦ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆ
      *
-     * @return integer ¼¡¤ËÁŞÆş¤¹¤Ù¤­¿ôÅº¤¨»ú
+     * @return integer æ¬¡ã«æŒ¿å…¥ã™ã¹ãæ•°æ·»ãˆå­—
      */
     private function _increaseIndex() {
         return $this->current_index++;
     }
 
     /**
-     * $key ¤ò¥­¡¼¤È¤·¤ÆÄÉ²Ã¤¹¤ë¤È¤·¤Æ¡¢¿ôÅº¤¨»ú¤ò¹¹¿·¤¹¤ë
+     * $key ã‚’ã‚­ãƒ¼ã¨ã—ã¦è¿½åŠ ã™ã‚‹ã¨ã—ã¦ã€æ•°æ·»ãˆå­—ã‚’æ›´æ–°ã™ã‚‹
      *
      * @param $key
      * @return void
@@ -596,11 +596,11 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¥­¡¼¤ËÂĞ±ş¤¹¤ëÃÍ¤òÊÖ¤¹
-     * nullÃÍ¤Ë¤âÂĞ±ş¤¹¤ë¤¿¤á¡¢ÃÍ¤òÇÛÎó¤Ç¥é¥Ã¥×¤·¤¿¤â¤Î¤òÊÖ¤¹
+     * ã‚­ãƒ¼ã«å¯¾å¿œã™ã‚‹å€¤ã‚’è¿”ã™
+     * nullå€¤ã«ã‚‚å¯¾å¿œã™ã‚‹ãŸã‚ã€å€¤ã‚’é…åˆ—ã§ãƒ©ãƒƒãƒ—ã—ãŸã‚‚ã®ã‚’è¿”ã™
      *
-     * @param mixed $key ¥­¡¼
-     * @return ÃÍ ¤¬¤¢¤ë¾ì¹ç¡¢ array(ÃÍ) Ìµ¤¤¾ì¹ç¤Ï false
+     * @param mixed $key ã‚­ãƒ¼
+     * @return å€¤ ãŒã‚ã‚‹å ´åˆã€ array(å€¤) ç„¡ã„å ´åˆã¯ false
      */
     private function _find($key) {
         if ($key === $this->last_find_key) {
@@ -620,7 +620,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤òÄÉ²Ã
+     * å€¤ã‚’è¿½åŠ 
      *
      * @param $key
      * @param $value
@@ -635,7 +635,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤ò¹¹¿·
+     * å€¤ã‚’æ›´æ–°
      *
      * @param $key
      * @param $value
@@ -649,7 +649,7 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ÃÍ¤òºï½ü
+     * å€¤ã‚’å‰Šé™¤
      *
      * @param $key
      * @param $value
@@ -663,12 +663,12 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * Á´¥Ç¡¼¥¿¤òºï½ü(TRUNCATE¤ËÁêÅö)
+     * å…¨ãƒ‡ãƒ¼ã‚¿ã‚’å‰Šé™¤(TRUNCATEã«ç›¸å½“)
      *
      * @return void
      */
     private function _clear() {
-        // SQLite ¤Ë¤Ï TRUNCATE ¤¬Â¸ºß¤·¤Ê¤¤¤Î¤Ç¡¢ DELETE ¤ÇÂåÍÑ¤¹¤ë
+        // SQLite ã«ã¯ TRUNCATE ãŒå­˜åœ¨ã—ãªã„ã®ã§ã€ DELETE ã§ä»£ç”¨ã™ã‚‹
         $this->_executeQuery("DELETE FROM `{$this->table_name}`");
         $this->count = 0;
 
@@ -676,10 +676,10 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¥ª¥Ö¥¸¥§¥¯¥ÈÀ¸À®¤Î½àÈ÷¤ò¹Ô¤¦
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã®æº–å‚™ã‚’è¡Œã†
      *
-     * !¥³¥ó¥¹¥È¥é¥¯¥¿¤ÇÉ¬¤º¸Æ¤Ğ¤Ê¤±¤ì¤Ğ¤Ê¤é¤Ê¤¤!
-     *  ¥Æ¡¼¥Ö¥ëÌ¾¤ÎÀßÄê¤È¡¢¥×¥í¥°¥é¥à¤ÎºÇ¸å¤Ë¥ê¥½¡¼¥¹¤ò²ó¼ı¤¹¤ë¤¿¤á¤Î»Å³İ¤±(¥ë¡¼¥È¥ª¥Ö¥¸¥§¥¯¥È¤ÎÊİ»ı)¤ò»Ü¤·¤Æ¤¤¤ë
+     * !ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§å¿…ãšå‘¼ã°ãªã‘ã‚Œã°ãªã‚‰ãªã„!
+     *  ãƒ†ãƒ¼ãƒ–ãƒ«åã®è¨­å®šã¨ã€ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®æœ€å¾Œã«ãƒªã‚½ãƒ¼ã‚¹ã‚’å›åã™ã‚‹ãŸã‚ã®ä»•æ›ã‘(ãƒ«ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä¿æŒ)ã‚’æ–½ã—ã¦ã„ã‚‹
      *
      * @param SqliteArray $self
      * @return void
@@ -687,19 +687,19 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     private static function _prepareObject($self) {
         if (!isset(self::$root_object)) {
             self::$root_object = false;
-            new self(); // ¥ë¡¼¥È¥ª¥Ö¥¸¥§¥¯¥È¤ÎÀ¸À® (¥³¥ó¥¹¥È¥é¥¯¥¿¤ò²ğ¤·¤Æ (*1) ¤Ø)
+            new self(); // ãƒ«ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ (ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’ä»‹ã—ã¦ (*1) ã¸)
         } elseif (!self::$root_object) {
-            // ¥ë¡¼¥È¥ª¥Ö¥¸¥§¥¯¥È¤ÎÅĞÏ¿ (*1)
+            // ãƒ«ãƒ¼ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç™»éŒ² (*1)
             self::$root_object = $self;
             return;
         }
 
-        // ÄÌ¾ï¥ª¥Ö¥¸¥§¥¯¥È¤È¤·¤Æ¤ÎÅĞÏ¿
+        // é€šå¸¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã—ã¦ã®ç™»éŒ²
         $self->table_name = self::TABLE_PREFIX . ++self::$object_counter;
     }
 
     /**
-     * ÇÛÎó¤ÎÅº¤¨»ú¤È¤·¤ÆÍ­¸ú¤Ê¥­¡¼¤òÊÖ¤¹
+     * é…åˆ—ã®æ·»ãˆå­—ã¨ã—ã¦æœ‰åŠ¹ãªã‚­ãƒ¼ã‚’è¿”ã™
      *
      * @param $key
      * @return integer or string
@@ -712,9 +712,9 @@ class SQLiteArray implements Countable, ArrayAccess, Iterator {
     }
 
     /**
-     * ¿ôÅº¤¨»ú¤È¤·¤Æ¸«¤Ê¤»¤ë¤«È½ÊÌ
+     * æ•°æ·»ãˆå­—ã¨ã—ã¦è¦‹ãªã›ã‚‹ã‹åˆ¤åˆ¥
      *
-     * @param mixed $key Åº¤¨»ú
+     * @param mixed $key æ·»ãˆå­—
      * @return boolean
      */
     private static function _isNumericKey($key) {

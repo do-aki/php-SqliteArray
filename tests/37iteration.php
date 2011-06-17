@@ -6,7 +6,7 @@ $t = new lime_test();
 
 
 /**
- * イテレーション
+ * 繧､繝�繝ｬ繝ｼ繧ｷ繝ｧ繝ｳ
  */
 $ra = array('a'=>1, 2, 'b'=>3, 5=>4, 5);
 $a = new SqliteArray($ra);

@@ -5,7 +5,7 @@ require_once dirname(dirname(__FILE__)) . '/src/SqliteArray.php';
 $t = new lime_test();
 
 /**
- * count ‚ÌƒeƒXƒg
+ * count ã®ãƒ†ã‚¹ãƒˆ
  */
 $a = new SqliteArray();
 $t->is_deeply($a->count(), 0);

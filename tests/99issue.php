@@ -4,7 +4,7 @@ require_once dirname(dirname(__FILE__)) . '/src/SqliteArray.php';
 
 $t = new lime_test();
 
-// offsetSet ‚Ì‹““®‚É‚æ‚èA–Í•í‚Å‚«‚È‚¢
+// offsetSet ã®æŒ™å‹•ã«ã‚ˆã‚Šã€æ¨¡å€£ã§ããªã„
 $ra = array();
 $a = new SqliteArray();
 

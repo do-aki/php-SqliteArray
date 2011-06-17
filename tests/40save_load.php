@@ -6,7 +6,7 @@ $t = new lime_test();
 
 
 /**
- * ƒtƒ@ƒCƒ‹•Û‘¶/“Ç‚İ‚İ ‚ÌƒeƒXƒg
+ * ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜/èª­ã¿è¾¼ã¿ ã®ãƒ†ã‚¹ãƒˆ
  */
 $name = tempnam(sys_get_temp_dir(), __CLASS__);
 $a = new SqliteArray(array(1, 2, '3'=>3, array(4), '5'));

@@ -6,7 +6,7 @@ $t = new lime_test();
 
 
 /**
- * push/set “®ì‚ÌƒeƒXƒg3
+ * push/set å‹•ä½œã®ãƒ†ã‚¹ãƒˆ3
  *
  */
 $array = new SqliteArray();

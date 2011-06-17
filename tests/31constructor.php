@@ -5,7 +5,7 @@ require_once dirname(dirname(__FILE__)) . '/src/SqliteArray.php';
 $t = new lime_test();
 
 /**
-* array ‚©‚ç‚ÌƒIƒuƒWƒFƒNƒg\’zƒeƒXƒg
+* array ã‹ã‚‰ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæ§‹ç¯‰ãƒ†ã‚¹ãƒˆ
 *
 */
 // array(0=>1, 1=>2, 2=>3, 3=>4, 4=>5, 5=>6)
