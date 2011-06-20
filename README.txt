@@ -7,10 +7,11 @@ Status     : alpha (for developer)
 これはなに？
 ================
 
-SQLite をバックエンドに利用した、 PHP ネイティブ Array 模倣クラス
+SQLite をバックエンドに利用している、 PHP ネイティブ array の模倣クラス
+ウリは、メモリあふれを気にせずにばんばんデータ突っ込めるくらい。
 使いどころがあるのかは分からない。
 
-sys_get_temp_dir 使ってるので、5.2.1 以上じゃないと動かないかも。
+sys_get_temp_dir 使ってるので、そのままだと 5.2.1 以上が必須。
 5.2.1 未満の場合は、オブジェクトを new する前に、
 
   SqliteArray::setTemporaryDirectory('/tmp');
