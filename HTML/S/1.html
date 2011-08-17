@@ -1,0 +1,788 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>SqliteArray.php</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<a id='TOP' name='TOP' /><h2 class='header'><a href='../mains.html'>root</a>/SqliteArray.php</h2>
+<em class='comment'>/* [&lt;][&gt;]<a href='#L114'>[^]</a><a href='#L720'>[v]</a>[top]<a href='#BOTTOM'>[bottom]</a><a href='../mains.html'>[index]</a><a href='../help.html'>[help]</a> */</em>
+<hr />
+<h2 class='header'>DEFINITIONS</h2>
+This source file includes following definitions.
+<ol>
+<li><a href='#L114' title='Defined at 114.'>__construct</a></li>
+<li><a href='#L143' title='Defined at 143.'>__destruct</a></li>
+<li><a href='#L163' title='Defined at 163.'>push</a></li>
+<li><a href='#L176' title='Defined at 176.'>set</a></li>
+<li><a href='#L192' title='Defined at 192.'>keys</a></li>
+<li><a href='#L211' title='Defined at 211.'>values</a></li>
+<li><a href='#L230' title='Defined at 230.'>get</a></li>
+<li><a href='#L250' title='Defined at 250.'>remove</a></li>
+<li><a href='#L261' title='Defined at 261.'>merge</a></li>
+<li><a href='#L280' title='Defined at 280.'>plus</a></li>
+<li><a href='#L297' title='Defined at 297.'>searchValue</a></li>
+<li><a href='#L317' title='Defined at 317.'>intersectKey</a></li>
+<li><a href='#L332' title='Defined at 332.'>toArray</a></li>
+<li><a href='#L347' title='Defined at 347.'>getArray</a></li>
+<li><a href='#L358' title='Defined at 358.'>saveFile</a></li>
+<li><a href='#L382' title='Defined at 382.'>loadFile</a></li>
+<li><a href='#L404' title='Defined at 404.'>count</a></li>
+<li><a href='#L414' title='Defined at 414.'>offsetExists</a></li>
+<li><a href='#L425' title='Defined at 425.'>offsetGet</a></li>
+<li><a href='#L440' title='Defined at 440.'>offsetSet</a></li>
+<li><a href='#L454' title='Defined at 454.'>offsetUnset</a></li>
+<li><a href='#L463' title='Defined at 463.'>current</a></li>
+<li><a href='#L472' title='Defined at 472.'>next</a></li>
+<li><a href='#L481' title='Defined at 481.'>key</a></li>
+<li><a href='#L490' title='Defined at 490.'>valid</a></li>
+<li><a href='#L502' title='Defined at 502.'>rewind</a></li>
+<li><a href='#L519' title='Defined at 519.'>setTemporaryDirectory</a></li>
+<li><a href='#L529' title='Defined at 529.'>_intersectKey</a></li>
+<li><a href='#L546' title='Defined at 546.'>_intersectKey_array</a></li>
+<li><a href='#L571' title='Defined at 571.'>_executeQuery</a></li>
+<li><a href='#L582' title='Defined at 582.'>_increaseIndex</a></li>
+<li><a href='#L592' title='Defined at 592.'>_updateIndex</a></li>
+<li><a href='#L605' title='Defined at 605.'>_find</a></li>
+<li><a href='#L629' title='Defined at 629.'>_insert</a></li>
+<li><a href='#L644' title='Defined at 644.'>_update</a></li>
+<li><a href='#L658' title='Defined at 658.'>_delete</a></li>
+<li><a href='#L670' title='Defined at 670.'>_clear</a></li>
+<li><a href='#L687' title='Defined at 687.'>_prepareObject</a></li>
+<li><a href='#L707' title='Defined at 707.'>_convertKey</a></li>
+<li><a href='#L720' title='Defined at 720.'>_isNumericKey</a></li>
+</ol>
+<hr />
+<pre>
+<a id='L1' name='L1' />   1 &lt;?php
+<a id='L2' name='L2' />   2 <em class='comment'>/**</em>
+<a id='L3' name='L3' />   3 <em class='comment'> * SQLiteArray.php</em>
+<a id='L4' name='L4' />   4 <em class='comment'> *</em>
+<a id='L5' name='L5' />   5 <em class='comment'> * @author do_aki &lt;do.hiroaki@gmail.com&gt;</em>
+<a id='L6' name='L6' />   6 <em class='comment'> * @license MIT License</em>
+<a id='L7' name='L7' />   7 <em class='comment'> *</em>
+<a id='L8' name='L8' />   8 <em class='comment'> * Copyright (c) 2011 do_aki &lt;do.hiroaki@gmail.com&gt;</em>
+<a id='L9' name='L9' />   9 <em class='comment'> *</em>
+<a id='L10' name='L10' />  10 <em class='comment'> * Permission is hereby granted, free of charge, to any person obtaining a copy</em>
+<a id='L11' name='L11' />  11 <em class='comment'> * of this software and associated documentation files (the "Software"), to deal</em>
+<a id='L12' name='L12' />  12 <em class='comment'> * in the Software without restriction, including without limitation the rights</em>
+<a id='L13' name='L13' />  13 <em class='comment'> * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</em>
+<a id='L14' name='L14' />  14 <em class='comment'> * copies of the Software, and to permit persons to whom the Software is</em>
+<a id='L15' name='L15' />  15 <em class='comment'> * furnished to do so, subject to the following conditions:</em>
+<a id='L16' name='L16' />  16 <em class='comment'> *</em>
+<a id='L17' name='L17' />  17 <em class='comment'> * The above copyright notice and this permission notice shall be included in</em>
+<a id='L18' name='L18' />  18 <em class='comment'> * all copies or substantial portions of the Software.</em>
+<a id='L19' name='L19' />  19 <em class='comment'> *</em>
+<a id='L20' name='L20' />  20 <em class='comment'> * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</em>
+<a id='L21' name='L21' />  21 <em class='comment'> * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</em>
+<a id='L22' name='L22' />  22 <em class='comment'> * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</em>
+<a id='L23' name='L23' />  23 <em class='comment'> * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</em>
+<a id='L24' name='L24' />  24 <em class='comment'> * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</em>
+<a id='L25' name='L25' />  25 <em class='comment'> * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN</em>
+<a id='L26' name='L26' />  26 <em class='comment'> * THE SOFTWARE.</em>
+<a id='L27' name='L27' />  27 <em class='comment'> */</em>
+<a id='L28' name='L28' />  28 
+<a id='L29' name='L29' />  29 <em class='comment'>/**</em>
+<a id='L30' name='L30' />  30 <em class='comment'> * SQLite を用いた配列クラス</em>
+<a id='L31' name='L31' />  31 <em class='comment'> *</em>
+<a id='L32' name='L32' />  32 <em class='comment'> * 一時的な単一のSQLiteファイルに書き出すようになっている。</em>
+<a id='L33' name='L33' />  33 <em class='comment'> * 基本的な動作は PHP の array を模倣。</em>
+<a id='L34' name='L34' />  34 <em class='comment'> *</em>
+<a id='L35' name='L35' />  35 <em class='comment'> * @author do_aki &lt;do.hiroaki@gmail.com&gt;</em>
+<a id='L36' name='L36' />  36 <em class='comment'> */</em>
+<a id='L37' name='L37' />  37 <strong class='reserved'>class</strong> SQLiteArray implements Countable, ArrayAccess, Iterator <em class='brace'>{</em>
+<a id='L38' name='L38' />  38 
+<a id='L39' name='L39' />  39     <em class='comment'>/**</em>
+<a id='L40' name='L40' />  40 <em class='comment'>     * @const string テーブル名に共通してつける接頭語</em>
+<a id='L41' name='L41' />  41 <em class='comment'>     */</em>
+<a id='L42' name='L42' />  42     <strong class='reserved'>const</strong> <a href='../Y/9.html' title='Multiple used in 2 places.'>TABLE_PREFIX</a> = 'a_';
+<a id='L43' name='L43' />  43 
+<a id='L44' name='L44' />  44     <em class='comment'>/**</em>
+<a id='L45' name='L45' />  45 <em class='comment'>     * @var SqliteArray ルートオブジェクトを保持する変数</em>
+<a id='L46' name='L46' />  46 <em class='comment'>     *      ルートオブジェクトは、初めて SqliteArray を使ったときに生成され、</em>
+<a id='L47' name='L47' />  47 <em class='comment'>     *      プログラムの終了時に後始末をするためのオブジェクト</em>
+<a id='L48' name='L48' />  48 <em class='comment'>     *      このオブジェクトにより、リソースの破棄が行われる</em>
+<a id='L49' name='L49' />  49 <em class='comment'>     */</em>
+<a id='L50' name='L50' />  50     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> $<a href='../Y/50.html' title='Multiple used in 5 places.'>root_object</a>;
+<a id='L51' name='L51' />  51 
+<a id='L52' name='L52' />  52     <em class='comment'>/**</em>
+<a id='L53' name='L53' />  53 <em class='comment'>     * @var integer SQLite 配列を生成する度にインクリメントされるカウンタ。テーブル名に利用される。</em>
+<a id='L54' name='L54' />  54 <em class='comment'>     */</em>
+<a id='L55' name='L55' />  55     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> $<a href='../Y/38.html' title='Multiple used in 2 places.'>object_counter</a> = 0;
+<a id='L56' name='L56' />  56 
+<a id='L57' name='L57' />  57     <em class='comment'>/**</em>
+<a id='L58' name='L58' />  58 <em class='comment'>     * @var PDO SQLiteに接続するための PDO オブジェクト</em>
+<a id='L59' name='L59' />  59 <em class='comment'>     */</em>
+<a id='L60' name='L60' />  60     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>;
+<a id='L61' name='L61' />  61 
+<a id='L62' name='L62' />  62     <em class='comment'>/**</em>
+<a id='L63' name='L63' />  63 <em class='comment'>     * @var string 一時的に作成されるファイル名</em>
+<a id='L64' name='L64' />  64 <em class='comment'>     */</em>
+<a id='L65' name='L65' />  65     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> $<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>;
+<a id='L66' name='L66' />  66 
+<a id='L67' name='L67' />  67     <em class='comment'>/**</em>
+<a id='L68' name='L68' />  68 <em class='comment'>     * @var string 一時ファイルを作成するディレクトリ</em>
+<a id='L69' name='L69' />  69 <em class='comment'>     */</em>
+<a id='L70' name='L70' />  70     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> $<a href='../Y/62.html' title='Multiple used in 5 places.'>temporary_directory</a>;
+<a id='L71' name='L71' />  71 
+<a id='L72' name='L72' />  72     <em class='comment'>/**</em>
+<a id='L73' name='L73' />  73 <em class='comment'>     * @var テーブル名</em>
+<a id='L74' name='L74' />  74 <em class='comment'>     */</em>
+<a id='L75' name='L75' />  75     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>;
+<a id='L76' name='L76' />  76 
+<a id='L77' name='L77' />  77     <em class='comment'>/**</em>
+<a id='L78' name='L78' />  78 <em class='comment'>     * @var integer 次に挿入される数字添え字</em>
+<a id='L79' name='L79' />  79 <em class='comment'>     */</em>
+<a id='L80' name='L80' />  80     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $<a href='../Y/15.html' title='Multiple used in 4 places.'>current_index</a> = 0;
+<a id='L81' name='L81' />  81 
+<a id='L82' name='L82' />  82     <em class='comment'>/**</em>
+<a id='L83' name='L83' />  83 <em class='comment'>     * @var integer 保持している項目数</em>
+<a id='L84' name='L84' />  84 <em class='comment'>     *         使う度、COUNT クエリを投げても良いけど、よく使うと思うのでオブジェクト側に保持する</em>
+<a id='L85' name='L85' />  85 <em class='comment'>     */</em>
+<a id='L86' name='L86' />  86     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $count = 0;
+<a id='L87' name='L87' />  87 
+<a id='L88' name='L88' />  88     <em class='comment'>/**</em>
+<a id='L89' name='L89' />  89 <em class='comment'>     * @var PDOStatement イテレータとして利用されるステートメントハンドル</em>
+<a id='L90' name='L90' />  90 <em class='comment'>     */</em>
+<a id='L91' name='L91' />  91     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a>;
+<a id='L92' name='L92' />  92 
+<a id='L93' name='L93' />  93     <em class='comment'>/**</em>
+<a id='L94' name='L94' />  94 <em class='comment'>     * @var array イテレーション時の現在値</em>
+<a id='L95' name='L95' />  95 <em class='comment'>     */</em>
+<a id='L96' name='L96' />  96     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $<a href='../Y/32.html' title='Multiple used in 6 places.'>iterator_current</a>;
+<a id='L97' name='L97' />  97 
+<a id='L98' name='L98' />  98     <em class='comment'>/**</em>
+<a id='L99' name='L99' />  99 <em class='comment'>     * @var mixed 最後に find されたキーを保持</em>
+<a id='L100' name='L100' /> 100 <em class='comment'>     */</em>
+<a id='L101' name='L101' /> 101     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a>;
+<a id='L102' name='L102' /> 102 
+<a id='L103' name='L103' /> 103     <em class='comment'>/**</em>
+<a id='L104' name='L104' /> 104 <em class='comment'>     * @var mixed 最後に find されたキーの値を保持</em>
+<a id='L105' name='L105' /> 105 <em class='comment'>     */</em>
+<a id='L106' name='L106' /> 106     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> $<a href='../Y/35.html' title='Multiple used in 3 places.'>last_find_value</a>;
+<a id='L107' name='L107' /> 107 
+<a id='L108' name='L108' /> 108     <em class='comment'>/**</em>
+<a id='L109' name='L109' /> 109 <em class='comment'>     * コンストラクタ</em>
+<a id='L110' name='L110' /> 110 <em class='comment'>     *</em>
+<a id='L111' name='L111' /> 111 <em class='comment'>     * @param array $array 初期化に用いる配列</em>
+<a id='L112' name='L112' /> 112 <em class='comment'>     *</em>
+<a id='L113' name='L113' /> 113 <em class='comment'>     */</em>
+<a id='L114' name='L114' /> 114     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> __construct($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>=<a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>) <em class='brace'>{</em>
+<a id='L115' name='L115' /> 115         <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L687' title='Defined at 687 in SqliteArray.php.'>_prepareObject</a>($this);
+<a id='L116' name='L116' /> 116 
+<a id='L117' name='L117' /> 117         <strong class='reserved'>if</strong> (!<a href='../Y/30.html' title='Multiple used in 6 places.'>isset</a>($this-&gt;<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>)) <em class='brace'>{</em>
+<a id='L118' name='L118' /> 118             <em class='comment'>// ルートオブジェクトのコンストラクタ</em>
+<a id='L119' name='L119' /> 119             <strong class='reserved'>if</strong> (!<a href='../Y/30.html' title='Multiple used in 6 places.'>isset</a>(<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/62.html' title='Multiple used in 5 places.'>temporary_directory</a>)) <em class='brace'>{</em>
+<a id='L120' name='L120' /> 120                 <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/62.html' title='Multiple used in 5 places.'>temporary_directory</a> = sys_get_temp_dir();
+<a id='L121' name='L121' /> 121             <em class='brace'>}</em>
+<a id='L122' name='L122' /> 122             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a> = tempnam(<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/62.html' title='Multiple used in 5 places.'>temporary_directory</a>, <strong class='reserved'>__CLASS__</strong>);
+<a id='L123' name='L123' /> 123             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a> = <strong class='reserved'>new</strong> <a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>("sqlite:".<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>);
+<a id='L124' name='L124' /> 124             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/55.html' title='Multiple used in 3 places.'>setAttribute</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/1.html' title='Multiple used in 3 places.'>ATTR_ERRMODE</a>, <a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/4.html' title='Multiple used in 3 places.'>ERRMODE_EXCEPTION</a>);
+<a id='L125' name='L125' /> 125             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/12.html' title='Multiple used in 2 places.'>beginTransaction</a>();
+<a id='L126' name='L126' /> 126             <strong class='reserved'>return</strong>;
+<a id='L127' name='L127' /> 127         <em class='brace'>}</em>
+<a id='L128' name='L128' /> 128 
+<a id='L129' name='L129' /> 129         <em class='comment'>// 通常オブジェクトのコンストラクタ</em>
+<a id='L130' name='L130' /> 130         <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/17.html' title='Multiple used in 3 places.'>exec</a>("CREATE TABLE `{$this-&gt;table_name}` (`key` PRIMARY KEY, `value`)");
+<a id='L131' name='L131' /> 131         <strong class='reserved'>if</strong> (<a href='../Y/30.html' title='Multiple used in 6 places.'>isset</a>($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>) &amp;&amp; <strong class='reserved'>is_array</strong>($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>)) <em class='brace'>{</em>
+<a id='L132' name='L132' /> 132             <strong class='reserved'>foreach</strong> ($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a> <strong class='reserved'>as</strong> $key =&gt; $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L133' name='L133' /> 133                 $this-&gt;<a href='../S/1.html#L629' title='Defined at 629 in SqliteArray.php.'>_insert</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L134' name='L134' /> 134             <em class='brace'>}</em>
+<a id='L135' name='L135' /> 135         <em class='brace'>}</em>
+<a id='L136' name='L136' /> 136     <em class='brace'>}</em>
+<a id='L137' name='L137' /> 137 
+<a id='L138' name='L138' /> 138     <em class='comment'>/**</em>
+<a id='L139' name='L139' /> 139 <em class='comment'>     * デストラクタ</em>
+<a id='L140' name='L140' /> 140 <em class='comment'>     *</em>
+<a id='L141' name='L141' /> 141 <em class='comment'>     * @return void</em>
+<a id='L142' name='L142' /> 142 <em class='comment'>     */</em>
+<a id='L143' name='L143' /> 143     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> __destruct() <em class='brace'>{</em>
+<a id='L144' name='L144' /> 144         <strong class='reserved'>if</strong> (!<a href='../Y/30.html' title='Multiple used in 6 places.'>isset</a>($this-&gt;<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>)) <em class='brace'>{</em>
+<a id='L145' name='L145' /> 145             <em class='comment'>// ダミーオブジェクトのデストラクタ＝プログラムの終了</em>
+<a id='L146' name='L146' /> 146             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L147' name='L147' /> 147             unlink(<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>);
+<a id='L148' name='L148' /> 148             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L149' name='L149' /> 149             <strong class='reserved'>return</strong>;
+<a id='L150' name='L150' /> 150         <em class='brace'>}</em>
+<a id='L151' name='L151' /> 151 
+<a id='L152' name='L152' /> 152         <em class='comment'>// 通常オブジェクトのデストラクタ</em>
+<a id='L153' name='L153' /> 153         <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/17.html' title='Multiple used in 3 places.'>exec</a>("DROP TABLE `{$this-&gt;table_name}`");
+<a id='L154' name='L154' /> 154     <em class='brace'>}</em>
+<a id='L155' name='L155' /> 155 
+<a id='L156' name='L156' /> 156     <em class='comment'>/**</em>
+<a id='L157' name='L157' /> 157 <em class='comment'>     * 値を追加</em>
+<a id='L158' name='L158' /> 158 <em class='comment'>     *  $array[] = $value を模倣</em>
+<a id='L159' name='L159' /> 159 <em class='comment'>     *</em>
+<a id='L160' name='L160' /> 160 <em class='comment'>     * @param mixed $value</em>
+<a id='L161' name='L161' /> 161 <em class='comment'>     * @return integer 配列の要素数</em>
+<a id='L162' name='L162' /> 162 <em class='comment'>     */</em>
+<a id='L163' name='L163' /> 163     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../R/17.html' title='Multiple refered from 2 places.'>push</a>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L164' name='L164' /> 164         $this-&gt;<a href='../S/1.html#L629' title='Defined at 629 in SqliteArray.php.'>_insert</a>($this-&gt;<a href='../S/1.html#L582' title='Defined at 582 in SqliteArray.php.'>_increaseIndex</a>(), $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L165' name='L165' /> 165         <strong class='reserved'>return</strong> $this-&gt;<a href='../S/1.html#L404' title='Defined at 404 in SqliteArray.php.'>count</a>;
+<a id='L166' name='L166' /> 166     <em class='brace'>}</em>
+<a id='L167' name='L167' /> 167 
+<a id='L168' name='L168' /> 168     <em class='comment'>/**</em>
+<a id='L169' name='L169' /> 169 <em class='comment'>     * 値を設定</em>
+<a id='L170' name='L170' /> 170 <em class='comment'>     *  $array[$key] = $value を模倣</em>
+<a id='L171' name='L171' /> 171 <em class='comment'>     *</em>
+<a id='L172' name='L172' /> 172 <em class='comment'>     * @param mixed $key</em>
+<a id='L173' name='L173' /> 173 <em class='comment'>     * @param mixed $value</em>
+<a id='L174' name='L174' /> 174 <em class='comment'>     * @return mixed</em>
+<a id='L175' name='L175' /> 175 <em class='comment'>     */</em>
+<a id='L176' name='L176' /> 176     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../R/19.html' title='Multiple refered from 2 places.'>set</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L177' name='L177' /> 177         $key = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($key);
+<a id='L178' name='L178' /> 178         <strong class='reserved'>if</strong> ($this-&gt;<a href='../S/1.html#L605' title='Defined at 605 in SqliteArray.php.'>_find</a>($key)) <em class='brace'>{</em>
+<a id='L179' name='L179' /> 179             $this-&gt;<a href='../S/1.html#L644' title='Defined at 644 in SqliteArray.php.'>_update</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L180' name='L180' /> 180         <em class='brace'>}</em> <strong class='reserved'>else</strong> <em class='brace'>{</em>
+<a id='L181' name='L181' /> 181             $this-&gt;<a href='../S/1.html#L629' title='Defined at 629 in SqliteArray.php.'>_insert</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L182' name='L182' /> 182             $this-&gt;<a href='../S/1.html#L592' title='Defined at 592 in SqliteArray.php.'>_updateIndex</a>($key);
+<a id='L183' name='L183' /> 183         <em class='brace'>}</em>
+<a id='L184' name='L184' /> 184         <strong class='reserved'>return</strong> $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>;
+<a id='L185' name='L185' /> 185     <em class='brace'>}</em>
+<a id='L186' name='L186' /> 186 
+<a id='L187' name='L187' /> 187     <em class='comment'>/**</em>
+<a id='L188' name='L188' /> 188 <em class='comment'>     * キーのみからなる SqliteArray を返す</em>
+<a id='L189' name='L189' /> 189 <em class='comment'>     *</em>
+<a id='L190' name='L190' /> 190 <em class='comment'>     * @return SqliteArray</em>
+<a id='L191' name='L191' /> 191 <em class='comment'>     */</em>
+<a id='L192' name='L192' /> 192     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> keys() <em class='brace'>{</em>
+<a id='L193' name='L193' /> 193         $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a> = <strong class='reserved'>new</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>();
+<a id='L194' name='L194' /> 194 
+<a id='L195' name='L195' /> 195         $<a href='../Y/23.html' title='Multiple used in 4 places.'>index</a> = 0;
+<a id='L196' name='L196' /> 196         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("SELECT `{$this-&gt;table_name}`.`key` FROM `{$this-&gt;table_name}`");
+<a id='L197' name='L197' /> 197         
+<a id='L198' name='L198' /> 198         <strong class='reserved'>while</strong> ($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a> = $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>)) <em class='brace'>{</em>
+<a id='L199' name='L199' /> 199             $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>[$<a href='../Y/23.html' title='Multiple used in 4 places.'>index</a>++] = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[0]);
+<a id='L200' name='L200' /> 200         <em class='brace'>}</em>
+<a id='L201' name='L201' /> 201 
+<a id='L202' name='L202' /> 202         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L203' name='L203' /> 203         <strong class='reserved'>return</strong> $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>;
+<a id='L204' name='L204' /> 204     <em class='brace'>}</em>
+<a id='L205' name='L205' /> 205 
+<a id='L206' name='L206' /> 206     <em class='comment'>/**</em>
+<a id='L207' name='L207' /> 207 <em class='comment'>     * 値のみからなる SqliteArray を返す</em>
+<a id='L208' name='L208' /> 208 <em class='comment'>     *</em>
+<a id='L209' name='L209' /> 209 <em class='comment'>     * @return SqliteArray</em>
+<a id='L210' name='L210' /> 210 <em class='comment'>     */</em>
+<a id='L211' name='L211' /> 211     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> values() <em class='brace'>{</em>
+<a id='L212' name='L212' /> 212         $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a> = <strong class='reserved'>new</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>();
+<a id='L213' name='L213' /> 213 
+<a id='L214' name='L214' /> 214         $<a href='../Y/23.html' title='Multiple used in 4 places.'>index</a> = 0;
+<a id='L215' name='L215' /> 215         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("SELECT `{$this-&gt;table_name}`.`value` FROM `{$this-&gt;table_name}`");
+<a id='L216' name='L216' /> 216         <strong class='reserved'>while</strong> ($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a> = $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>)) <em class='brace'>{</em>
+<a id='L217' name='L217' /> 217             $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>[$<a href='../Y/23.html' title='Multiple used in 4 places.'>index</a>++] = <a href='../Y/64.html' title='Multiple used in 4 places.'>unserialize</a>($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[0]);
+<a id='L218' name='L218' /> 218         <em class='brace'>}</em>
+<a id='L219' name='L219' /> 219 
+<a id='L220' name='L220' /> 220         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L221' name='L221' /> 221         <strong class='reserved'>return</strong> $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>;
+<a id='L222' name='L222' /> 222     <em class='brace'>}</em>
+<a id='L223' name='L223' /> 223 
+<a id='L224' name='L224' /> 224     <em class='comment'>/**</em>
+<a id='L225' name='L225' /> 225 <em class='comment'>     * 値を取得</em>
+<a id='L226' name='L226' /> 226 <em class='comment'>     *</em>
+<a id='L227' name='L227' /> 227 <em class='comment'>     * @param mixed $key</em>
+<a id='L228' name='L228' /> 228 <em class='comment'>     * @return mixed</em>
+<a id='L229' name='L229' /> 229 <em class='comment'>     */</em>
+<a id='L230' name='L230' /> 230     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L426' title='Refered from 426 in SqliteArray.php.'>get</a>($key) <em class='brace'>{</em>
+<a id='L231' name='L231' /> 231         $key = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($key);
+<a id='L232' name='L232' /> 232         $<a href='../Y/66.html' title='Multiple used in 5 places.'>val</a> = $this-&gt;<a href='../S/1.html#L605' title='Defined at 605 in SqliteArray.php.'>_find</a>($key);
+<a id='L233' name='L233' /> 233         <strong class='reserved'>if</strong> ($<a href='../Y/66.html' title='Multiple used in 5 places.'>val</a>) <em class='brace'>{</em>
+<a id='L234' name='L234' /> 234             <strong class='reserved'>return</strong> $<a href='../Y/66.html' title='Multiple used in 5 places.'>val</a>[0];
+<a id='L235' name='L235' /> 235         <em class='brace'>}</em>
+<a id='L236' name='L236' /> 236 
+<a id='L237' name='L237' /> 237         <strong class='reserved'>return</strong> <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L238' name='L238' /> 238     <em class='brace'>}</em>
+<a id='L239' name='L239' /> 239 
+<a id='L240' name='L240' /> 240     <em class='comment'>/**</em>
+<a id='L241' name='L241' /> 241 <em class='comment'>     * 値を削除</em>
+<a id='L242' name='L242' /> 242 <em class='comment'>     *</em>
+<a id='L243' name='L243' /> 243 <em class='comment'>     * SQLite は、削除行については削除されたマークをつけるだけなので、</em>
+<a id='L244' name='L244' /> 244 <em class='comment'>     * この後に挿入したとしても順序が問題になることはない</em>
+<a id='L245' name='L245' /> 245 <em class='comment'>     * オートバキュームは、駄目、絶対.</em>
+<a id='L246' name='L246' /> 246 <em class='comment'>     *</em>
+<a id='L247' name='L247' /> 247 <em class='comment'>     * @param $key</em>
+<a id='L248' name='L248' /> 248 <em class='comment'>     * @return boolean 削除した場合</em>
+<a id='L249' name='L249' /> 249 <em class='comment'>     */</em>
+<a id='L250' name='L250' /> 250     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L455' title='Refered from 455 in SqliteArray.php.'>remove</a>($key) <em class='brace'>{</em>
+<a id='L251' name='L251' /> 251         $this-&gt;<a href='../S/1.html#L658' title='Defined at 658 in SqliteArray.php.'>_delete</a>(<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($key));
+<a id='L252' name='L252' /> 252     <em class='brace'>}</em>
+<a id='L253' name='L253' /> 253 
+<a id='L254' name='L254' /> 254     <em class='comment'>/**</em>
+<a id='L255' name='L255' /> 255 <em class='comment'>     * array_merge の挙動を模倣</em>
+<a id='L256' name='L256' /> 256 <em class='comment'>     * 但し、破壊的</em>
+<a id='L257' name='L257' /> 257 <em class='comment'>     *</em>
+<a id='L258' name='L258' /> 258 <em class='comment'>     * @param $array</em>
+<a id='L259' name='L259' /> 259 <em class='comment'>     * @return SqliteArray 自身を返す</em>
+<a id='L260' name='L260' /> 260 <em class='comment'>     */</em>
+<a id='L261' name='L261' /> 261     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> merge($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>) <em class='brace'>{</em>
+<a id='L262' name='L262' /> 262         <strong class='reserved'>foreach</strong> ($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a> <strong class='reserved'>as</strong> $key =&gt; $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L263' name='L263' /> 263             <strong class='reserved'>if</strong> (<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L720' title='Defined at 720 in SqliteArray.php.'>_isNumericKey</a>($key)) <em class='brace'>{</em>
+<a id='L264' name='L264' /> 264                 $this-&gt;<a href='../S/1.html#L163' title='Defined at 163 in SqliteArray.php.'>push</a>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L265' name='L265' /> 265             <em class='brace'>}</em> <strong class='reserved'>else</strong> <em class='brace'>{</em>
+<a id='L266' name='L266' /> 266                 $this-&gt;<a href='../S/1.html#L176' title='Defined at 176 in SqliteArray.php.'>set</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L267' name='L267' /> 267             <em class='brace'>}</em>
+<a id='L268' name='L268' /> 268         <em class='brace'>}</em>
+<a id='L269' name='L269' /> 269 
+<a id='L270' name='L270' /> 270         <strong class='reserved'>return</strong> $this;
+<a id='L271' name='L271' /> 271     <em class='brace'>}</em>
+<a id='L272' name='L272' /> 272 
+<a id='L273' name='L273' /> 273     <em class='comment'>/**</em>
+<a id='L274' name='L274' /> 274 <em class='comment'>     * + 演算子の挙動を模倣</em>
+<a id='L275' name='L275' /> 275 <em class='comment'>     * 但し、破壊的</em>
+<a id='L276' name='L276' /> 276 <em class='comment'>     *</em>
+<a id='L277' name='L277' /> 277 <em class='comment'>     * @param $array</em>
+<a id='L278' name='L278' /> 278 <em class='comment'>     * @return void</em>
+<a id='L279' name='L279' /> 279 <em class='comment'>     */</em>
+<a id='L280' name='L280' /> 280     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> plus($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>) <em class='brace'>{</em>
+<a id='L281' name='L281' /> 281            <strong class='reserved'>foreach</strong> ($<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a> <strong class='reserved'>as</strong> $key =&gt; $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L282' name='L282' /> 282             <strong class='reserved'>if</strong> (!$this-&gt;<a href='../S/1.html#L605' title='Defined at 605 in SqliteArray.php.'>_find</a>($key)) <em class='brace'>{</em>
+<a id='L283' name='L283' /> 283                 $this-&gt;<a href='../S/1.html#L629' title='Defined at 629 in SqliteArray.php.'>_insert</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L284' name='L284' /> 284             <em class='brace'>}</em>
+<a id='L285' name='L285' /> 285         <em class='brace'>}</em>
+<a id='L286' name='L286' /> 286     <em class='brace'>}</em>
+<a id='L287' name='L287' /> 287 
+<a id='L288' name='L288' /> 288     <em class='comment'>/**</em>
+<a id='L289' name='L289' /> 289 <em class='comment'>     * 値で配列を検索し、見つかった場合、対応するキーを返す</em>
+<a id='L290' name='L290' /> 290 <em class='comment'>     *</em>
+<a id='L291' name='L291' /> 291 <em class='comment'>     * array_search の模倣</em>
+<a id='L292' name='L292' /> 292 <em class='comment'>     * 但し、 strict検索のみしか行えない</em>
+<a id='L293' name='L293' /> 293 <em class='comment'>     *</em>
+<a id='L294' name='L294' /> 294 <em class='comment'>     * @param $value</em>
+<a id='L295' name='L295' /> 295 <em class='comment'>     * @return mixed 配列のキーまたは false</em>
+<a id='L296' name='L296' /> 296 <em class='comment'>     */</em>
+<a id='L297' name='L297' /> 297     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> searchValue($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L298' name='L298' /> 298         $<a href='../Y/56.html' title='Multiple used in 4 places.'>sql</a> = "SELECT `key` FROM `{$this-&gt;table_name}` WHERE `value` = ? LIMIT 1";
+<a id='L299' name='L299' /> 299         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>($<a href='../Y/56.html' title='Multiple used in 4 places.'>sql</a>, <strong class='reserved'>array</strong>(<a href='../Y/54.html' title='Multiple used in 3 places.'>serialize</a>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>)));
+<a id='L300' name='L300' /> 300         $<a href='../Y/47.html' title='Multiple used in 4 places.'>ret</a> = $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>);
+<a id='L301' name='L301' /> 301         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L302' name='L302' /> 302         <strong class='reserved'>if</strong> ($<a href='../Y/47.html' title='Multiple used in 4 places.'>ret</a>) <em class='brace'>{</em>
+<a id='L303' name='L303' /> 303             <strong class='reserved'>return</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($<a href='../Y/47.html' title='Multiple used in 4 places.'>ret</a>[0]);
+<a id='L304' name='L304' /> 304         <em class='brace'>}</em>
+<a id='L305' name='L305' /> 305         <strong class='reserved'>return</strong> <strong class='reserved'>false</strong>;
+<a id='L306' name='L306' /> 306     <em class='brace'>}</em>
+<a id='L307' name='L307' /> 307 
+<a id='L308' name='L308' /> 308     <em class='comment'>/**</em>
+<a id='L309' name='L309' /> 309 <em class='comment'>     * キーを基準に、共通する項目のSQLite 配列を返す</em>
+<a id='L310' name='L310' /> 310 <em class='comment'>     *</em>
+<a id='L311' name='L311' /> 311 <em class='comment'>     * array_intersect_key っぽいもの</em>
+<a id='L312' name='L312' /> 312 <em class='comment'>     * 非破壊。</em>
+<a id='L313' name='L313' /> 313 <em class='comment'>     *</em>
+<a id='L314' name='L314' /> 314 <em class='comment'>     * @param SqliteArray or array $rhs</em>
+<a id='L315' name='L315' /> 315 <em class='comment'>     * @return SqliteArray</em>
+<a id='L316' name='L316' /> 316 <em class='comment'>     */</em>
+<a id='L317' name='L317' /> 317     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> intersectKey($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>) <em class='brace'>{</em>
+<a id='L318' name='L318' /> 318         <strong class='reserved'>if</strong> ($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a> instanceof <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>) <em class='brace'>{</em>
+<a id='L319' name='L319' /> 319             <strong class='reserved'>return</strong> $this-&gt;<a href='../S/1.html#L529' title='Defined at 529 in SqliteArray.php.'>_intersectKey</a>($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>);
+<a id='L320' name='L320' /> 320         <em class='brace'>}</em> <strong class='reserved'>elseif</strong> (<strong class='reserved'>is_array</strong>($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>)) <em class='brace'>{</em>
+<a id='L321' name='L321' /> 321             <strong class='reserved'>return</strong> $this-&gt;<a href='../S/1.html#L546' title='Defined at 546 in SqliteArray.php.'>_intersectKey_array</a>($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>);
+<a id='L322' name='L322' /> 322         <em class='brace'>}</em>
+<a id='L323' name='L323' /> 323         <strong class='reserved'>return</strong> <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L324' name='L324' /> 324     <em class='brace'>}</em>
+<a id='L325' name='L325' /> 325 
+<a id='L326' name='L326' /> 326     <em class='comment'>/**</em>
+<a id='L327' name='L327' /> 327 <em class='comment'>     * SQLite配列の中身（テーブル）の全てを array にして返す</em>
+<a id='L328' name='L328' /> 328 <em class='comment'>     * 量が多い場合はメモリに乗り切らない可能性もあるので注意</em>
+<a id='L329' name='L329' /> 329 <em class='comment'>     *</em>
+<a id='L330' name='L330' /> 330 <em class='comment'>     * @return array</em>
+<a id='L331' name='L331' /> 331 <em class='comment'>     */</em>
+<a id='L332' name='L332' /> 332     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L348' title='Refered from 348 in SqliteArray.php.'>toArray</a>() <em class='brace'>{</em>
+<a id='L333' name='L333' /> 333         $<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a> = <strong class='reserved'>array</strong>();
+<a id='L334' name='L334' /> 334         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("SELECT `key`,`value` FROM `{$this-&gt;table_name}`");
+<a id='L335' name='L335' /> 335         <strong class='reserved'>while</strong> ($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a> = $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>)) <em class='brace'>{</em>
+<a id='L336' name='L336' /> 336             $<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>[$<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[0]] = <a href='../Y/64.html' title='Multiple used in 4 places.'>unserialize</a>($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[1]);
+<a id='L337' name='L337' /> 337         <em class='brace'>}</em>
+<a id='L338' name='L338' /> 338         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L339' name='L339' /> 339         <strong class='reserved'>return</strong> $<a href='../Y/10.html' title='Multiple used in 10 places.'>array</a>;
+<a id='L340' name='L340' /> 340     <em class='brace'>}</em>
+<a id='L341' name='L341' /> 341 
+<a id='L342' name='L342' /> 342     <em class='comment'>/**</em>
+<a id='L343' name='L343' /> 343 <em class='comment'>     * toArray の別名</em>
+<a id='L344' name='L344' /> 344 <em class='comment'>     *</em>
+<a id='L345' name='L345' /> 345 <em class='comment'>     * @return array</em>
+<a id='L346' name='L346' /> 346 <em class='comment'>     */</em>
+<a id='L347' name='L347' /> 347     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> getArray() <em class='brace'>{</em>
+<a id='L348' name='L348' /> 348         <strong class='reserved'>return</strong> $this-&gt;<a href='../S/1.html#L332' title='Defined at 332 in SqliteArray.php.'>toArray</a>();
+<a id='L349' name='L349' /> 349     <em class='brace'>}</em>
+<a id='L350' name='L350' /> 350 
+<a id='L351' name='L351' /> 351     <em class='comment'>/**</em>
+<a id='L352' name='L352' /> 352 <em class='comment'>     * LoadFile で復元できるようにファイルに保存</em>
+<a id='L353' name='L353' /> 353 <em class='comment'>     *</em>
+<a id='L354' name='L354' /> 354 <em class='comment'>     * @param $file_name  保存先ファイル名</em>
+<a id='L355' name='L355' /> 355 <em class='comment'>     * @param $table_name 保存先テーブル名（任意）</em>
+<a id='L356' name='L356' /> 356 <em class='comment'>     * @return void</em>
+<a id='L357' name='L357' /> 357 <em class='comment'>     */</em>
+<a id='L358' name='L358' /> 358     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> saveFile($<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>, $<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>=<strong class='reserved'>__CLASS__</strong>) <em class='brace'>{</em>
+<a id='L359' name='L359' /> 359         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a> = <strong class='reserved'>new</strong> <a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>("sqlite:{$<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>}");
+<a id='L360' name='L360' /> 360         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/55.html' title='Multiple used in 3 places.'>setAttribute</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/1.html' title='Multiple used in 3 places.'>ATTR_ERRMODE</a>, <a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/4.html' title='Multiple used in 3 places.'>ERRMODE_EXCEPTION</a>);
+<a id='L361' name='L361' /> 361         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/17.html' title='Multiple used in 3 places.'>exec</a>("CREATE TABLE `{$<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>}` (`key` PRIMARY KEY, `value`)");
+<a id='L362' name='L362' /> 362         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/12.html' title='Multiple used in 2 places.'>beginTransaction</a>();
+<a id='L363' name='L363' /> 363         $<a href='../Y/24.html' title='Multiple used in 4 places.'>insert_sth</a> = $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/42.html' title='Multiple used in 3 places.'>prepare</a>("INSERT INTO `{$<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>}` (`key`,`value`) VALUES (?,?)");
+<a id='L364' name='L364' /> 364 
+<a id='L365' name='L365' /> 365         $<a href='../Y/52.html' title='Multiple used in 6 places.'>select_sth</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("SELECT `key`,`value` FROM `{$this-&gt;table_name}`");
+<a id='L366' name='L366' /> 366         <strong class='reserved'>while</strong> ($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a> = $<a href='../Y/52.html' title='Multiple used in 6 places.'>select_sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>)) <em class='brace'>{</em>
+<a id='L367' name='L367' /> 367             $<a href='../Y/24.html' title='Multiple used in 4 places.'>insert_sth</a>-&gt;<a href='../Y/18.html' title='Multiple used in 3 places.'>execute</a>(<strong class='reserved'>array</strong>($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[0], $<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[1]));
+<a id='L368' name='L368' /> 368         <em class='brace'>}</em>
+<a id='L369' name='L369' /> 369         $<a href='../Y/52.html' title='Multiple used in 6 places.'>select_sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L370' name='L370' /> 370 
+<a id='L371' name='L371' /> 371         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;commit();
+<a id='L372' name='L372' /> 372         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L373' name='L373' /> 373     <em class='brace'>}</em>
+<a id='L374' name='L374' /> 374 
+<a id='L375' name='L375' /> 375     <em class='comment'>/**</em>
+<a id='L376' name='L376' /> 376 <em class='comment'>     * SaveFile で保存したファイルから復元</em>
+<a id='L377' name='L377' /> 377 <em class='comment'>     *</em>
+<a id='L378' name='L378' /> 378 <em class='comment'>     * @param $file_name   保存されているファイル名</em>
+<a id='L379' name='L379' /> 379 <em class='comment'>     * @param $table_name  保存先テーブル名（SaveFile メソッドで指定した場合は必要）</em>
+<a id='L380' name='L380' /> 380 <em class='comment'>     * @return void</em>
+<a id='L381' name='L381' /> 381 <em class='comment'>     */</em>
+<a id='L382' name='L382' /> 382     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> loadFile($<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>, $<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>=<strong class='reserved'>__CLASS__</strong>) <em class='brace'>{</em>
+<a id='L383' name='L383' /> 383         $this-&gt;<a href='../S/1.html#L670' title='Defined at 670 in SqliteArray.php.'>_clear</a>();
+<a id='L384' name='L384' /> 384 
+<a id='L385' name='L385' /> 385         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a> = <strong class='reserved'>new</strong> <a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>("sqlite:{$<a href='../Y/20.html' title='Multiple used in 9 places.'>file_name</a>}");
+<a id='L386' name='L386' /> 386         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/55.html' title='Multiple used in 3 places.'>setAttribute</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/1.html' title='Multiple used in 3 places.'>ATTR_ERRMODE</a>, <a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/4.html' title='Multiple used in 3 places.'>ERRMODE_EXCEPTION</a>);
+<a id='L387' name='L387' /> 387         $<a href='../Y/52.html' title='Multiple used in 6 places.'>select_sth</a> = $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;query("SELECT `key`,`value` FROM `{$<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a>}`");
+<a id='L388' name='L388' /> 388 
+<a id='L389' name='L389' /> 389         $<a href='../Y/24.html' title='Multiple used in 4 places.'>insert_sth</a> = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/42.html' title='Multiple used in 3 places.'>prepare</a>("INSERT INTO `{$this-&gt;table_name}` (`key`,`value`) VALUES (?,?)");
+<a id='L390' name='L390' /> 390 
+<a id='L391' name='L391' /> 391         <strong class='reserved'>while</strong> ($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a> = $<a href='../Y/52.html' title='Multiple used in 6 places.'>select_sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>)) <em class='brace'>{</em>
+<a id='L392' name='L392' /> 392             $<a href='../Y/24.html' title='Multiple used in 4 places.'>insert_sth</a>-&gt;<a href='../Y/18.html' title='Multiple used in 3 places.'>execute</a>(<strong class='reserved'>array</strong>($<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[0], $<a href='../Y/51.html' title='Multiple used in 10 places.'>row</a>[1]));
+<a id='L393' name='L393' /> 393         <em class='brace'>}</em>
+<a id='L394' name='L394' /> 394         $<a href='../Y/52.html' title='Multiple used in 6 places.'>select_sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L395' name='L395' /> 395 
+<a id='L396' name='L396' /> 396         $<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L397' name='L397' /> 397     <em class='brace'>}</em>
+<a id='L398' name='L398' /> 398 
+<a id='L399' name='L399' /> 399     <em class='comment'>/**</em>
+<a id='L400' name='L400' /> 400 <em class='comment'>     * Countable の実装</em>
+<a id='L401' name='L401' /> 401 <em class='comment'>     *</em>
+<a id='L402' name='L402' /> 402 <em class='comment'>     * @return integer 配列要素数</em>
+<a id='L403' name='L403' /> 403 <em class='comment'>     */</em>
+<a id='L404' name='L404' /> 404     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../R/14.html' title='Multiple refered from 7 places.'>count</a>() <em class='brace'>{</em>
+<a id='L405' name='L405' /> 405         <strong class='reserved'>return</strong> $this-&gt;<a href='../S/1.html#L404' title='Defined at 404 in SqliteArray.php.'>count</a>;
+<a id='L406' name='L406' /> 406     <em class='brace'>}</em>
+<a id='L407' name='L407' /> 407 
+<a id='L408' name='L408' /> 408     <em class='comment'>/**</em>
+<a id='L409' name='L409' /> 409 <em class='comment'>     * ArrayAccess の実装 (存在確認)</em>
+<a id='L410' name='L410' /> 410 <em class='comment'>     *</em>
+<a id='L411' name='L411' /> 411 <em class='comment'>     * @param $offset</em>
+<a id='L412' name='L412' /> 412 <em class='comment'>     * @return mixed</em>
+<a id='L413' name='L413' /> 413 <em class='comment'>     */</em>
+<a id='L414' name='L414' /> 414     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> offsetExists($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>) <em class='brace'>{</em>
+<a id='L415' name='L415' /> 415         $<a href='../Y/66.html' title='Multiple used in 5 places.'>val</a> = $this-&gt;<a href='../S/1.html#L605' title='Defined at 605 in SqliteArray.php.'>_find</a>(<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>));
+<a id='L416' name='L416' /> 416         <strong class='reserved'>return</strong> ($<a href='../Y/66.html' title='Multiple used in 5 places.'>val</a>) ? $<a href='../Y/66.html' title='Multiple used in 5 places.'>val</a>[0] : <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L417' name='L417' /> 417     <em class='brace'>}</em>
+<a id='L418' name='L418' /> 418 
+<a id='L419' name='L419' /> 419     <em class='comment'>/**</em>
+<a id='L420' name='L420' /> 420 <em class='comment'>     * ArrayAccess の実装 （値取得）</em>
+<a id='L421' name='L421' /> 421 <em class='comment'>     *</em>
+<a id='L422' name='L422' /> 422 <em class='comment'>     * @param $offset</em>
+<a id='L423' name='L423' /> 423 <em class='comment'>     * @return mixed</em>
+<a id='L424' name='L424' /> 424 <em class='comment'>     */</em>
+<a id='L425' name='L425' /> 425     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> offsetGet($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>) <em class='brace'>{</em>
+<a id='L426' name='L426' /> 426         <strong class='reserved'>return</strong> $this-&gt;<a href='../S/1.html#L230' title='Defined at 230 in SqliteArray.php.'>get</a>($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>);
+<a id='L427' name='L427' /> 427     <em class='brace'>}</em>
+<a id='L428' name='L428' /> 428 
+<a id='L429' name='L429' /> 429     <em class='comment'>/**</em>
+<a id='L430' name='L430' /> 430 <em class='comment'>     * ArrayAccess の実装 （値設定）</em>
+<a id='L431' name='L431' /> 431 <em class='comment'>     *</em>
+<a id='L432' name='L432' /> 432 <em class='comment'>     * $array[null] も、 $array[] も 区別できない(どちらの場合も、$offset は null で渡ってくる)</em>
+<a id='L433' name='L433' /> 433 <em class='comment'>     * ネイティブ array に対する null 添字は 空文字と同義。なので、 $array[null] のときだけはネイティブ array と挙動が異なる事に注意。</em>
+<a id='L434' name='L434' /> 434 <em class='comment'>     * 今後どうなるんだろうねぇ。</em>
+<a id='L435' name='L435' /> 435 <em class='comment'>     *</em>
+<a id='L436' name='L436' /> 436 <em class='comment'>     * @param string $offset</em>
+<a id='L437' name='L437' /> 437 <em class='comment'>     * @param mixed $value</em>
+<a id='L438' name='L438' /> 438 <em class='comment'>     * @return void</em>
+<a id='L439' name='L439' /> 439 <em class='comment'>     */</em>
+<a id='L440' name='L440' /> 440     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> offsetSet($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L441' name='L441' /> 441         <strong class='reserved'>if</strong> (<a href='../Y/37.html' title='Multiple used in 15 places.'>null</a> === $<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>) <em class='brace'>{</em>
+<a id='L442' name='L442' /> 442             $this-&gt;<a href='../S/1.html#L163' title='Defined at 163 in SqliteArray.php.'>push</a>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L443' name='L443' /> 443         <em class='brace'>}</em> <strong class='reserved'>else</strong> <em class='brace'>{</em>
+<a id='L444' name='L444' /> 444             $this-&gt;<a href='../S/1.html#L176' title='Defined at 176 in SqliteArray.php.'>set</a>($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L445' name='L445' /> 445         <em class='brace'>}</em>
+<a id='L446' name='L446' /> 446     <em class='brace'>}</em>
+<a id='L447' name='L447' /> 447 
+<a id='L448' name='L448' /> 448     <em class='comment'>/**</em>
+<a id='L449' name='L449' /> 449 <em class='comment'>     * ArrayAccess の実装 （値削除）</em>
+<a id='L450' name='L450' /> 450 <em class='comment'>     *</em>
+<a id='L451' name='L451' /> 451 <em class='comment'>     * @param string $offset</em>
+<a id='L452' name='L452' /> 452 <em class='comment'>     * @return void</em>
+<a id='L453' name='L453' /> 453 <em class='comment'>     */</em>
+<a id='L454' name='L454' /> 454     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> offsetUnset($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>) <em class='brace'>{</em>
+<a id='L455' name='L455' /> 455         $this-&gt;<a href='../S/1.html#L250' title='Defined at 250 in SqliteArray.php.'>remove</a>($<a href='../Y/39.html' title='Multiple used in 9 places.'>offset</a>);
+<a id='L456' name='L456' /> 456     <em class='brace'>}</em>
+<a id='L457' name='L457' /> 457 
+<a id='L458' name='L458' /> 458     <em class='comment'>/**</em>
+<a id='L459' name='L459' /> 459 <em class='comment'>     * Iterator の実装(現在の値を取得)</em>
+<a id='L460' name='L460' /> 460 <em class='comment'>     *</em>
+<a id='L461' name='L461' /> 461 <em class='comment'>     * @return mixed 現在の値</em>
+<a id='L462' name='L462' /> 462 <em class='comment'>     */</em>
+<a id='L463' name='L463' /> 463     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> current() <em class='brace'>{</em>
+<a id='L464' name='L464' /> 464         <strong class='reserved'>return</strong> <a href='../Y/64.html' title='Multiple used in 4 places.'>unserialize</a>($this-&gt;<a href='../Y/32.html' title='Multiple used in 6 places.'>iterator_current</a>['value']);
+<a id='L465' name='L465' /> 465     <em class='brace'>}</em>
+<a id='L466' name='L466' /> 466 
+<a id='L467' name='L467' /> 467     <em class='comment'>/**</em>
+<a id='L468' name='L468' /> 468 <em class='comment'>     * Iterator の実装 （イテレータを次へ進める）</em>
+<a id='L469' name='L469' /> 469 <em class='comment'>     *</em>
+<a id='L470' name='L470' /> 470 <em class='comment'>     * @return void</em>
+<a id='L471' name='L471' /> 471 <em class='comment'>     */</em>
+<a id='L472' name='L472' /> 472     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> next() <em class='brace'>{</em>
+<a id='L473' name='L473' /> 473         $this-&gt;<a href='../Y/32.html' title='Multiple used in 6 places.'>iterator_current</a> = $this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/5.html' title='Multiple used in 2 places.'>FETCH_ASSOC</a>);
+<a id='L474' name='L474' /> 474     <em class='brace'>}</em>
+<a id='L475' name='L475' /> 475 
+<a id='L476' name='L476' /> 476     <em class='comment'>/**</em>
+<a id='L477' name='L477' /> 477 <em class='comment'>     * Iterator の実装 （現在のキーを取得）</em>
+<a id='L478' name='L478' /> 478 <em class='comment'>     *</em>
+<a id='L479' name='L479' /> 479 <em class='comment'>     * @return mixed 現在のキー</em>
+<a id='L480' name='L480' /> 480 <em class='comment'>     */</em>
+<a id='L481' name='L481' /> 481     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> <a href='../R/16.html' title='Multiple refered from 38 places.'>key</a>() <em class='brace'>{</em>
+<a id='L482' name='L482' /> 482         <strong class='reserved'>return</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($this-&gt;<a href='../Y/32.html' title='Multiple used in 6 places.'>iterator_current</a>['key']);
+<a id='L483' name='L483' /> 483     <em class='brace'>}</em>
+<a id='L484' name='L484' /> 484 
+<a id='L485' name='L485' /> 485     <em class='comment'>/**</em>
+<a id='L486' name='L486' /> 486 <em class='comment'>     * Iterator の実装 （次に取得する値が有効かどうか）</em>
+<a id='L487' name='L487' /> 487 <em class='comment'>     *</em>
+<a id='L488' name='L488' /> 488 <em class='comment'>     * @return boolean 次に取得する値が有効なら true, そうでないなら false</em>
+<a id='L489' name='L489' /> 489 <em class='comment'>     */</em>
+<a id='L490' name='L490' /> 490     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> valid() <em class='brace'>{</em>
+<a id='L491' name='L491' /> 491         <strong class='reserved'>if</strong> (!$this-&gt;<a href='../Y/32.html' title='Multiple used in 6 places.'>iterator_current</a>) <em class='brace'>{</em>
+<a id='L492' name='L492' /> 492             $this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L493' name='L493' /> 493             $this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L494' name='L494' /> 494             <strong class='reserved'>return</strong> <strong class='reserved'>false</strong>;
+<a id='L495' name='L495' /> 495         <em class='brace'>}</em>
+<a id='L496' name='L496' /> 496         <strong class='reserved'>return</strong> <strong class='reserved'>true</strong>;
+<a id='L497' name='L497' /> 497     <em class='brace'>}</em>
+<a id='L498' name='L498' /> 498 
+<a id='L499' name='L499' /> 499     <em class='comment'>/**</em>
+<a id='L500' name='L500' /> 500 <em class='comment'>     * Iterator の実装 （イテレータを最初に戻す）</em>
+<a id='L501' name='L501' /> 501 <em class='comment'>     */</em>
+<a id='L502' name='L502' /> 502     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>function</strong> rewind() <em class='brace'>{</em>
+<a id='L503' name='L503' /> 503         <strong class='reserved'>if</strong> (<a href='../Y/30.html' title='Multiple used in 6 places.'>isset</a>($this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a>)) <em class='brace'>{</em>
+<a id='L504' name='L504' /> 504             $this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L505' name='L505' /> 505         <em class='brace'>}</em>
+<a id='L506' name='L506' /> 506 
+<a id='L507' name='L507' /> 507         $this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("SELECT `key`,`value` FROM `{$this-&gt;table_name}`");
+<a id='L508' name='L508' /> 508         $this-&gt;<a href='../Y/32.html' title='Multiple used in 6 places.'>iterator_current</a> = $this-&gt;<a href='../Y/31.html' title='Multiple used in 8 places.'>iterator</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/5.html' title='Multiple used in 2 places.'>FETCH_ASSOC</a>);
+<a id='L509' name='L509' /> 509     <em class='brace'>}</em>
+<a id='L510' name='L510' /> 510 
+<a id='L511' name='L511' /> 511     <em class='comment'>/*</em>
+<a id='L512' name='L512' /> 512 <em class='comment'>     * 一時ファイルを格納するディレクトリを指定</em>
+<a id='L513' name='L513' /> 513 <em class='comment'>     *</em>
+<a id='L514' name='L514' /> 514 <em class='comment'>     * 最初コンストラクタが実行される前のみ有効</em>
+<a id='L515' name='L515' /> 515 <em class='comment'>     *</em>
+<a id='L516' name='L516' /> 516 <em class='comment'>     * @param string $dirname 一時ファイルを格納するディレクトリ</em>
+<a id='L517' name='L517' /> 517 <em class='comment'>     * @return void</em>
+<a id='L518' name='L518' /> 518 <em class='comment'>     */</em>
+<a id='L519' name='L519' /> 519     <a href='../Y/44.html' title='Multiple used in 27 places.'>public</a> <strong class='reserved'>static</strong> <strong class='reserved'>function</strong> setTemporaryDirectory($<a href='../Y/16.html' title='Multiple used in 2 places.'>dirname</a>) <em class='brace'>{</em>
+<a id='L520' name='L520' /> 520         <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/62.html' title='Multiple used in 5 places.'>temporary_directory</a> = $<a href='../Y/16.html' title='Multiple used in 2 places.'>dirname</a>;
+<a id='L521' name='L521' /> 521     <em class='brace'>}</em>
+<a id='L522' name='L522' /> 522 
+<a id='L523' name='L523' /> 523     <em class='comment'>/**</em>
+<a id='L524' name='L524' /> 524 <em class='comment'>     * 対 SQLite 配列版 intersectKey</em>
+<a id='L525' name='L525' /> 525 <em class='comment'>     *</em>
+<a id='L526' name='L526' /> 526 <em class='comment'>     * @param SqliteArray $rhs</em>
+<a id='L527' name='L527' /> 527 <em class='comment'>     * @return SqliteArray</em>
+<a id='L528' name='L528' /> 528 <em class='comment'>     */</em>
+<a id='L529' name='L529' /> 529     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L319' title='Refered from 319 in SqliteArray.php.'>_intersectKey</a>($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>) <em class='brace'>{</em>
+<a id='L530' name='L530' /> 530         $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a> = <strong class='reserved'>new</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>();
+<a id='L531' name='L531' /> 531 
+<a id='L532' name='L532' /> 532         $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>(
+<a id='L533' name='L533' /> 533             "INSERT INTO {$<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>-&gt;table_name} (`key`,`value`)"
+<a id='L534' name='L534' /> 534             ." SELECT `{$this-&gt;table_name}`.`key`, `{$this-&gt;table_name}`.`value` FROM `{$this-&gt;table_name}`, `{$<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>-&gt;table_name}`"
+<a id='L535' name='L535' /> 535             ." WHERE `{$this-&gt;table_name}`.`key` = `{$<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>-&gt;table_name}`.`key`"
+<a id='L536' name='L536' /> 536         );
+<a id='L537' name='L537' /> 537 
+<a id='L538' name='L538' /> 538         <strong class='reserved'>return</strong> $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>;
+<a id='L539' name='L539' /> 539     <em class='brace'>}</em>
+<a id='L540' name='L540' /> 540 
+<a id='L541' name='L541' /> 541     <em class='comment'>/**</em>
+<a id='L542' name='L542' /> 542 <em class='comment'>     * 対 array 版 intersectKey</em>
+<a id='L543' name='L543' /> 543 <em class='comment'>     * @param array $rhs</em>
+<a id='L544' name='L544' /> 544 <em class='comment'>     * @return SqliteArray</em>
+<a id='L545' name='L545' /> 545 <em class='comment'>     */</em>
+<a id='L546' name='L546' /> 546     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L321' title='Refered from 321 in SqliteArray.php.'>_intersectKey_array</a>($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a>) <em class='brace'>{</em>
+<a id='L547' name='L547' /> 547         $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a> = <strong class='reserved'>new</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>();
+<a id='L548' name='L548' /> 548 
+<a id='L549' name='L549' /> 549         $<a href='../Y/49.html' title='Multiple used in 4 places.'>rhs_keys</a> = <strong class='reserved'>array</strong>();
+<a id='L550' name='L550' /> 550         <strong class='reserved'>foreach</strong> ($<a href='../Y/48.html' title='Multiple used in 10 places.'>rhs</a> <strong class='reserved'>as</strong> $<a href='../Y/33.html' title='Multiple used in 2 places.'>k</a> =&gt; $v) <em class='brace'>{</em>
+<a id='L551' name='L551' /> 551             $<a href='../Y/49.html' title='Multiple used in 4 places.'>rhs_keys</a>[] = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L707' title='Defined at 707 in SqliteArray.php.'>_convertKey</a>($<a href='../Y/33.html' title='Multiple used in 2 places.'>k</a>);
+<a id='L552' name='L552' /> 552         <em class='brace'>}</em>
+<a id='L553' name='L553' /> 553 
+<a id='L554' name='L554' /> 554         $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>(
+<a id='L555' name='L555' /> 555             "INSERT INTO {$<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>-&gt;table_name} (`key`,`value`)"
+<a id='L556' name='L556' /> 556             ." SELECT `key`, `value` FROM `{$this-&gt;table_name}`"
+<a id='L557' name='L557' /> 557             ." WHERE `key` IN (". implode(',', array_fill(0, <a href='../S/1.html#L404' title='Defined at 404 in SqliteArray.php.'>count</a>($<a href='../Y/49.html' title='Multiple used in 4 places.'>rhs_keys</a>), '?')) .")"
+<a id='L558' name='L558' /> 558             , $<a href='../Y/49.html' title='Multiple used in 4 places.'>rhs_keys</a>
+<a id='L559' name='L559' /> 559         );
+<a id='L560' name='L560' /> 560 
+<a id='L561' name='L561' /> 561         <strong class='reserved'>return</strong> $<a href='../Y/36.html' title='Multiple used in 12 places.'>new</a>;
+<a id='L562' name='L562' /> 562     <em class='brace'>}</em>
+<a id='L563' name='L563' /> 563 
+<a id='L564' name='L564' /> 564     <em class='comment'>/**</em>
+<a id='L565' name='L565' /> 565 <em class='comment'>     * クエリの実行</em>
+<a id='L566' name='L566' /> 566 <em class='comment'>     *</em>
+<a id='L567' name='L567' /> 567 <em class='comment'>     * @param string $sql    実行するクエリ</em>
+<a id='L568' name='L568' /> 568 <em class='comment'>     * @param array  $params バインディングパラメタ</em>
+<a id='L569' name='L569' /> 569 <em class='comment'>     * @return PDOStatement 実行済みステートメントハンドル</em>
+<a id='L570' name='L570' /> 570 <em class='comment'>     */</em>
+<a id='L571' name='L571' /> 571     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../R/4.html' title='Multiple refered from 13 places.'>_executeQuery</a>($<a href='../Y/56.html' title='Multiple used in 4 places.'>sql</a>, $<a href='../Y/40.html' title='Multiple used in 2 places.'>params</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>) <em class='brace'>{</em>
+<a id='L572' name='L572' /> 572         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a> = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/57.html' title='Multiple used in 20 places.'>sqlite</a>-&gt;<a href='../Y/42.html' title='Multiple used in 3 places.'>prepare</a>($<a href='../Y/56.html' title='Multiple used in 4 places.'>sql</a>);
+<a id='L573' name='L573' /> 573         $<a href='../Y/47.html' title='Multiple used in 4 places.'>ret</a> = $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/18.html' title='Multiple used in 3 places.'>execute</a>($<a href='../Y/40.html' title='Multiple used in 2 places.'>params</a>);
+<a id='L574' name='L574' /> 574         <strong class='reserved'>return</strong> $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>;
+<a id='L575' name='L575' /> 575     <em class='brace'>}</em>
+<a id='L576' name='L576' /> 576 
+<a id='L577' name='L577' /> 577     <em class='comment'>/**</em>
+<a id='L578' name='L578' /> 578 <em class='comment'>     * 次に挿入すべき数添え字を返してインクリメント</em>
+<a id='L579' name='L579' /> 579 <em class='comment'>     *</em>
+<a id='L580' name='L580' /> 580 <em class='comment'>     * @return integer 次に挿入すべき数添え字</em>
+<a id='L581' name='L581' /> 581 <em class='comment'>     */</em>
+<a id='L582' name='L582' /> 582     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L164' title='Refered from 164 in SqliteArray.php.'>_increaseIndex</a>() <em class='brace'>{</em>
+<a id='L583' name='L583' /> 583         <strong class='reserved'>return</strong> $this-&gt;<a href='../Y/15.html' title='Multiple used in 4 places.'>current_index</a>++;
+<a id='L584' name='L584' /> 584     <em class='brace'>}</em>
+<a id='L585' name='L585' /> 585 
+<a id='L586' name='L586' /> 586     <em class='comment'>/**</em>
+<a id='L587' name='L587' /> 587 <em class='comment'>     * $key をキーとして追加するとして、数添え字を更新する</em>
+<a id='L588' name='L588' /> 588 <em class='comment'>     *</em>
+<a id='L589' name='L589' /> 589 <em class='comment'>     * @param $key</em>
+<a id='L590' name='L590' /> 590 <em class='comment'>     * @return void</em>
+<a id='L591' name='L591' /> 591 <em class='comment'>     */</em>
+<a id='L592' name='L592' /> 592     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L182' title='Refered from 182 in SqliteArray.php.'>_updateIndex</a>($key) <em class='brace'>{</em>
+<a id='L593' name='L593' /> 593         <strong class='reserved'>if</strong> (<a href='../Y/29.html' title='Multiple used in 2 places.'>is_int</a>($key) &amp;&amp; $this-&gt;<a href='../Y/15.html' title='Multiple used in 4 places.'>current_index</a> &lt; $key) <em class='brace'>{</em>
+<a id='L594' name='L594' /> 594             $this-&gt;<a href='../Y/15.html' title='Multiple used in 4 places.'>current_index</a> = 1+$key;
+<a id='L595' name='L595' /> 595         <em class='brace'>}</em>
+<a id='L596' name='L596' /> 596     <em class='brace'>}</em>
+<a id='L597' name='L597' /> 597 
+<a id='L598' name='L598' /> 598     <em class='comment'>/**</em>
+<a id='L599' name='L599' /> 599 <em class='comment'>     * キーに対応する値を返す</em>
+<a id='L600' name='L600' /> 600 <em class='comment'>     * null値にも対応するため、値を配列でラップしたものを返す</em>
+<a id='L601' name='L601' /> 601 <em class='comment'>     *</em>
+<a id='L602' name='L602' /> 602 <em class='comment'>     * @param mixed $key キー</em>
+<a id='L603' name='L603' /> 603 <em class='comment'>     * @return 値 がある場合、 array(値) 無い場合は false</em>
+<a id='L604' name='L604' /> 604 <em class='comment'>     */</em>
+<a id='L605' name='L605' /> 605     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../R/5.html' title='Multiple refered from 4 places.'>_find</a>($key) <em class='brace'>{</em>
+<a id='L606' name='L606' /> 606         <strong class='reserved'>if</strong> ($key === $this-&gt;<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a>) <em class='brace'>{</em>
+<a id='L607' name='L607' /> 607             <strong class='reserved'>return</strong> $this-&gt;<a href='../Y/35.html' title='Multiple used in 3 places.'>last_find_value</a>;
+<a id='L608' name='L608' /> 608         <em class='brace'>}</em>
+<a id='L609' name='L609' /> 609 
+<a id='L610' name='L610' /> 610         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a> = $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("SELECT `value` FROM `{$this-&gt;table_name}` WHERE `key` = ? LIMIT 1", <strong class='reserved'>array</strong>($key));
+<a id='L611' name='L611' /> 611         $<a href='../Y/46.html' title='Multiple used in 5 places.'>result</a> = $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/19.html' title='Multiple used in 9 places.'>fetch</a>(<a href='../Y/8.html' title='Multiple used in 15 places.'>PDO</a>::<a href='../Y/6.html' title='Multiple used in 7 places.'>FETCH_NUM</a>);
+<a id='L612' name='L612' /> 612         <strong class='reserved'>if</strong> ($<a href='../Y/46.html' title='Multiple used in 5 places.'>result</a>) <em class='brace'>{</em>
+<a id='L613' name='L613' /> 613             $<a href='../Y/46.html' title='Multiple used in 5 places.'>result</a> = <strong class='reserved'>array</strong>(<a href='../Y/64.html' title='Multiple used in 4 places.'>unserialize</a>($<a href='../Y/46.html' title='Multiple used in 5 places.'>result</a>[0]));
+<a id='L614' name='L614' /> 614         <em class='brace'>}</em>
+<a id='L615' name='L615' /> 615         $<a href='../Y/58.html' title='Multiple used in 18 places.'>sth</a>-&gt;<a href='../Y/13.html' title='Multiple used in 9 places.'>closeCursor</a>();
+<a id='L616' name='L616' /> 616 
+<a id='L617' name='L617' /> 617         $this-&gt;<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a>   = $key;
+<a id='L618' name='L618' /> 618         $this-&gt;<a href='../Y/35.html' title='Multiple used in 3 places.'>last_find_value</a> = $<a href='../Y/46.html' title='Multiple used in 5 places.'>result</a>;
+<a id='L619' name='L619' /> 619         <strong class='reserved'>return</strong> $<a href='../Y/46.html' title='Multiple used in 5 places.'>result</a>;
+<a id='L620' name='L620' /> 620     <em class='brace'>}</em>
+<a id='L621' name='L621' /> 621 
+<a id='L622' name='L622' /> 622     <em class='comment'>/**</em>
+<a id='L623' name='L623' /> 623 <em class='comment'>     * 値を追加</em>
+<a id='L624' name='L624' /> 624 <em class='comment'>     *</em>
+<a id='L625' name='L625' /> 625 <em class='comment'>     * @param $key</em>
+<a id='L626' name='L626' /> 626 <em class='comment'>     * @param $value</em>
+<a id='L627' name='L627' /> 627 <em class='comment'>     * @return void</em>
+<a id='L628' name='L628' /> 628 <em class='comment'>     */</em>
+<a id='L629' name='L629' /> 629     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../R/7.html' title='Multiple refered from 4 places.'>_insert</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L630' name='L630' /> 630         $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a> = <a href='../Y/54.html' title='Multiple used in 3 places.'>serialize</a>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L631' name='L631' /> 631         $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("INSERT INTO `{$this-&gt;table_name}` (`key`,`value`) VALUES (?,?)", <strong class='reserved'>array</strong>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>));
+<a id='L632' name='L632' /> 632         ++$this-&gt;<a href='../S/1.html#L404' title='Defined at 404 in SqliteArray.php.'>count</a>;
+<a id='L633' name='L633' /> 633 
+<a id='L634' name='L634' /> 634         $this-&gt;<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L635' name='L635' /> 635     <em class='brace'>}</em>
+<a id='L636' name='L636' /> 636 
+<a id='L637' name='L637' /> 637     <em class='comment'>/**</em>
+<a id='L638' name='L638' /> 638 <em class='comment'>     * 値を更新</em>
+<a id='L639' name='L639' /> 639 <em class='comment'>     *</em>
+<a id='L640' name='L640' /> 640 <em class='comment'>     * @param $key</em>
+<a id='L641' name='L641' /> 641 <em class='comment'>     * @param $value</em>
+<a id='L642' name='L642' /> 642 <em class='comment'>     * @return void</em>
+<a id='L643' name='L643' /> 643 <em class='comment'>     */</em>
+<a id='L644' name='L644' /> 644     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L179' title='Refered from 179 in SqliteArray.php.'>_update</a>($key, $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>) <em class='brace'>{</em>
+<a id='L645' name='L645' /> 645         $<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a> = <a href='../Y/54.html' title='Multiple used in 3 places.'>serialize</a>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>);
+<a id='L646' name='L646' /> 646         $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("UPDATE `{$this-&gt;table_name}` SET `value`= ? WHERE `key` = ?", <strong class='reserved'>array</strong>($<a href='../Y/67.html' title='Multiple used in 24 places.'>value</a>, $key));
+<a id='L647' name='L647' /> 647 
+<a id='L648' name='L648' /> 648         $this-&gt;<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L649' name='L649' /> 649     <em class='brace'>}</em>
+<a id='L650' name='L650' /> 650 
+<a id='L651' name='L651' /> 651     <em class='comment'>/**</em>
+<a id='L652' name='L652' /> 652 <em class='comment'>     * 値を削除</em>
+<a id='L653' name='L653' /> 653 <em class='comment'>     *</em>
+<a id='L654' name='L654' /> 654 <em class='comment'>     * @param $key</em>
+<a id='L655' name='L655' /> 655 <em class='comment'>     * @param $value</em>
+<a id='L656' name='L656' /> 656 <em class='comment'>     * @return void</em>
+<a id='L657' name='L657' /> 657 <em class='comment'>     */</em>
+<a id='L658' name='L658' /> 658     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L251' title='Refered from 251 in SqliteArray.php.'>_delete</a>($key) <em class='brace'>{</em>
+<a id='L659' name='L659' /> 659         $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("DELETE FROM `{$this-&gt;table_name}` WHERE `key` = ?", <strong class='reserved'>array</strong>($key));
+<a id='L660' name='L660' /> 660         --$this-&gt;<a href='../S/1.html#L404' title='Defined at 404 in SqliteArray.php.'>count</a>;
+<a id='L661' name='L661' /> 661 
+<a id='L662' name='L662' /> 662         $this-&gt;<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L663' name='L663' /> 663     <em class='brace'>}</em>
+<a id='L664' name='L664' /> 664 
+<a id='L665' name='L665' /> 665     <em class='comment'>/**</em>
+<a id='L666' name='L666' /> 666 <em class='comment'>     * 全データを削除(TRUNCATEに相当)</em>
+<a id='L667' name='L667' /> 667 <em class='comment'>     *</em>
+<a id='L668' name='L668' /> 668 <em class='comment'>     * @return void</em>
+<a id='L669' name='L669' /> 669 <em class='comment'>     */</em>
+<a id='L670' name='L670' /> 670     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>function</strong> <a href='../S/1.html#L383' title='Refered from 383 in SqliteArray.php.'>_clear</a>() <em class='brace'>{</em>
+<a id='L671' name='L671' /> 671         <em class='comment'>// SQLite には TRUNCATE が存在しないので、 DELETE で代用する</em>
+<a id='L672' name='L672' /> 672         $this-&gt;<a href='../S/1.html#L571' title='Defined at 571 in SqliteArray.php.'>_executeQuery</a>("DELETE FROM `{$this-&gt;table_name}`");
+<a id='L673' name='L673' /> 673         $this-&gt;<a href='../S/1.html#L404' title='Defined at 404 in SqliteArray.php.'>count</a> = 0;
+<a id='L674' name='L674' /> 674 
+<a id='L675' name='L675' /> 675         $this-&gt;<a href='../Y/34.html' title='Multiple used in 7 places.'>last_find_key</a> = <a href='../Y/37.html' title='Multiple used in 15 places.'>null</a>;
+<a id='L676' name='L676' /> 676     <em class='brace'>}</em>
+<a id='L677' name='L677' /> 677 
+<a id='L678' name='L678' /> 678     <em class='comment'>/**</em>
+<a id='L679' name='L679' /> 679 <em class='comment'>     * オブジェクト生成の準備を行う</em>
+<a id='L680' name='L680' /> 680 <em class='comment'>     *</em>
+<a id='L681' name='L681' /> 681 <em class='comment'>     * !コンストラクタで必ず呼ばなければならない!</em>
+<a id='L682' name='L682' /> 682 <em class='comment'>     *  テーブル名の設定と、プログラムの最後にリソースを回収するための仕掛け(ルートオブジェクトの保持)を施している</em>
+<a id='L683' name='L683' /> 683 <em class='comment'>     *</em>
+<a id='L684' name='L684' /> 684 <em class='comment'>     * @param SqliteArray $self</em>
+<a id='L685' name='L685' /> 685 <em class='comment'>     * @return void</em>
+<a id='L686' name='L686' /> 686 <em class='comment'>     */</em>
+<a id='L687' name='L687' /> 687     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> <strong class='reserved'>function</strong> <a href='../S/1.html#L115' title='Refered from 115 in SqliteArray.php.'>_prepareObject</a>($<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>) <em class='brace'>{</em>
+<a id='L688' name='L688' /> 688         <strong class='reserved'>if</strong> (!<a href='../Y/30.html' title='Multiple used in 6 places.'>isset</a>(<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/50.html' title='Multiple used in 5 places.'>root_object</a>)) <em class='brace'>{</em>
+<a id='L689' name='L689' /> 689             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/50.html' title='Multiple used in 5 places.'>root_object</a> = <strong class='reserved'>false</strong>;
+<a id='L690' name='L690' /> 690             <strong class='reserved'>new</strong> <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>(); <em class='comment'>// ルートオブジェクトの生成 (コンストラクタを介して (*1) へ)</em>
+<a id='L691' name='L691' /> 691         <em class='brace'>}</em> <strong class='reserved'>elseif</strong> (!<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/50.html' title='Multiple used in 5 places.'>root_object</a>) <em class='brace'>{</em>
+<a id='L692' name='L692' /> 692             <em class='comment'>// ルートオブジェクトの登録 (*1)</em>
+<a id='L693' name='L693' /> 693             <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/50.html' title='Multiple used in 5 places.'>root_object</a> = $<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>;
+<a id='L694' name='L694' /> 694             <strong class='reserved'>return</strong>;
+<a id='L695' name='L695' /> 695         <em class='brace'>}</em>
+<a id='L696' name='L696' /> 696 
+<a id='L697' name='L697' /> 697         <em class='comment'>// 通常オブジェクトとしての登録</em>
+<a id='L698' name='L698' /> 698         $<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>-&gt;<a href='../Y/60.html' title='Multiple used in 9 places.'>table_name</a> = <a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../Y/9.html' title='Multiple used in 2 places.'>TABLE_PREFIX</a> . ++<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::$<a href='../Y/38.html' title='Multiple used in 2 places.'>object_counter</a>;
+<a id='L699' name='L699' /> 699     <em class='brace'>}</em>
+<a id='L700' name='L700' /> 700 
+<a id='L701' name='L701' /> 701     <em class='comment'>/**</em>
+<a id='L702' name='L702' /> 702 <em class='comment'>     * 配列の添え字として有効なキーを返す</em>
+<a id='L703' name='L703' /> 703 <em class='comment'>     *</em>
+<a id='L704' name='L704' /> 704 <em class='comment'>     * @param $key</em>
+<a id='L705' name='L705' /> 705 <em class='comment'>     * @return integer or string</em>
+<a id='L706' name='L706' /> 706 <em class='comment'>     */</em>
+<a id='L707' name='L707' /> 707     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> <strong class='reserved'>function</strong> <a href='../R/2.html' title='Multiple refered from 8 places.'>_convertKey</a>($key) <em class='brace'>{</em>
+<a id='L708' name='L708' /> 708         <strong class='reserved'>if</strong> (<a href='../Y/53.html' title='Multiple used in 37 places.'>self</a>::<a href='../S/1.html#L720' title='Defined at 720 in SqliteArray.php.'>_isNumericKey</a>($key)) <em class='brace'>{</em>
+<a id='L709' name='L709' /> 709             $key = intval($key);
+<a id='L710' name='L710' /> 710         <em class='brace'>}</em>
+<a id='L711' name='L711' /> 711         <strong class='reserved'>return</strong> $key;
+<a id='L712' name='L712' /> 712     <em class='brace'>}</em>
+<a id='L713' name='L713' /> 713 
+<a id='L714' name='L714' /> 714     <em class='comment'>/**</em>
+<a id='L715' name='L715' /> 715 <em class='comment'>     * 数添え字として見なせるか判別</em>
+<a id='L716' name='L716' /> 716 <em class='comment'>     *</em>
+<a id='L717' name='L717' /> 717 <em class='comment'>     * @param mixed $key 添え字</em>
+<a id='L718' name='L718' /> 718 <em class='comment'>     * @return boolean</em>
+<a id='L719' name='L719' /> 719 <em class='comment'>     */</em>
+<a id='L720' name='L720' /> 720     <a href='../Y/43.html' title='Multiple used in 25 places.'>private</a> <strong class='reserved'>static</strong> <strong class='reserved'>function</strong> <a href='../R/10.html' title='Multiple refered from 2 places.'>_isNumericKey</a>($key) <em class='brace'>{</em>
+<a id='L721' name='L721' /> 721         <strong class='reserved'>return</strong> <a href='../Y/29.html' title='Multiple used in 2 places.'>is_int</a>($key) || is_bool($key) || is_float($key) || preg_match('/\A(:?0|[1-9][0-9]*)\Z/', $key);
+<a id='L722' name='L722' /> 722     <em class='brace'>}</em>
+<a id='L723' name='L723' /> 723 <em class='brace'>}</em>
+</pre>
+<hr />
+<a id='BOTTOM' name='BOTTOM' />
+<em class='comment'>/* [&lt;][&gt;]<a href='#L114'>[^]</a><a href='#L720'>[v]</a><a href='#TOP'>[top]</a>[bottom]<a href='../mains.html'>[index]</a><a href='../help.html'>[help]</a> */</em>
+</body>
+</html>

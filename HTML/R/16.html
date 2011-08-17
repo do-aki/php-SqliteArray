@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>key</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L132'>key</a>               132 SqliteArray.php             foreach ($array as $key =&gt; $value) {</span>
+<span class='curline'><a href='../S/1.html#L133'>key</a>               133 SqliteArray.php                 $this-&gt;_insert($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L176'>key</a>               176 SqliteArray.php     public function set($key, $value) {</span>
+<span class='curline'><a href='../S/1.html#L177'>key</a>               177 SqliteArray.php         $key = self::_convertKey($key);</span>
+<span class='curline'><a href='../S/1.html#L178'>key</a>               178 SqliteArray.php         if ($this-&gt;_find($key)) {</span>
+<span class='curline'><a href='../S/1.html#L179'>key</a>               179 SqliteArray.php             $this-&gt;_update($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L181'>key</a>               181 SqliteArray.php             $this-&gt;_insert($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L182'>key</a>               182 SqliteArray.php             $this-&gt;_updateIndex($key);</span>
+<span class='curline'><a href='../S/1.html#L230'>key</a>               230 SqliteArray.php     public function get($key) {</span>
+<span class='curline'><a href='../S/1.html#L231'>key</a>               231 SqliteArray.php         $key = self::_convertKey($key);</span>
+<span class='curline'><a href='../S/1.html#L232'>key</a>               232 SqliteArray.php         $val = $this-&gt;_find($key);</span>
+<span class='curline'><a href='../S/1.html#L250'>key</a>               250 SqliteArray.php     public function remove($key) {</span>
+<span class='curline'><a href='../S/1.html#L251'>key</a>               251 SqliteArray.php         $this-&gt;_delete(self::_convertKey($key));</span>
+<span class='curline'><a href='../S/1.html#L262'>key</a>               262 SqliteArray.php         foreach ($array as $key =&gt; $value) {</span>
+<span class='curline'><a href='../S/1.html#L263'>key</a>               263 SqliteArray.php             if (self::_isNumericKey($key)) {</span>
+<span class='curline'><a href='../S/1.html#L266'>key</a>               266 SqliteArray.php                 $this-&gt;set($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L281'>key</a>               281 SqliteArray.php            foreach ($array as $key =&gt; $value) {</span>
+<span class='curline'><a href='../S/1.html#L282'>key</a>               282 SqliteArray.php             if (!$this-&gt;_find($key)) {</span>
+<span class='curline'><a href='../S/1.html#L283'>key</a>               283 SqliteArray.php                 $this-&gt;_insert($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L592'>key</a>               592 SqliteArray.php     private function _updateIndex($key) {</span>
+<span class='curline'><a href='../S/1.html#L593'>key</a>               593 SqliteArray.php         if (is_int($key) &amp;&amp; $this-&gt;current_index &lt; $key) {</span>
+<span class='curline'><a href='../S/1.html#L594'>key</a>               594 SqliteArray.php             $this-&gt;current_index = 1+$key;</span>
+<span class='curline'><a href='../S/1.html#L605'>key</a>               605 SqliteArray.php     private function _find($key) {</span>
+<span class='curline'><a href='../S/1.html#L606'>key</a>               606 SqliteArray.php         if ($key === $this-&gt;last_find_key) {</span>
+<span class='curline'><a href='../S/1.html#L610'>key</a>               610 SqliteArray.php         $sth = $this-&gt;_executeQuery("SELECT `value` FROM `{$this-&gt;table_name}` WHERE `key` = ? LIMIT 1", array($key));</span>
+<span class='curline'><a href='../S/1.html#L617'>key</a>               617 SqliteArray.php         $this-&gt;last_find_key   = $key;</span>
+<span class='curline'><a href='../S/1.html#L629'>key</a>               629 SqliteArray.php     private function _insert($key, $value) {</span>
+<span class='curline'><a href='../S/1.html#L631'>key</a>               631 SqliteArray.php         $this-&gt;_executeQuery("INSERT INTO `{$this-&gt;table_name}` (`key`,`value`) VALUES (?,?)", array($key, $value));</span>
+<span class='curline'><a href='../S/1.html#L644'>key</a>               644 SqliteArray.php     private function _update($key, $value) {</span>
+<span class='curline'><a href='../S/1.html#L646'>key</a>               646 SqliteArray.php         $this-&gt;_executeQuery("UPDATE `{$this-&gt;table_name}` SET `value`= ? WHERE `key` = ?", array($value, $key));</span>
+<span class='curline'><a href='../S/1.html#L658'>key</a>               658 SqliteArray.php     private function _delete($key) {</span>
+<span class='curline'><a href='../S/1.html#L659'>key</a>               659 SqliteArray.php         $this-&gt;_executeQuery("DELETE FROM `{$this-&gt;table_name}` WHERE `key` = ?", array($key));</span>
+<span class='curline'><a href='../S/1.html#L707'>key</a>               707 SqliteArray.php     private static function _convertKey($key) {</span>
+<span class='curline'><a href='../S/1.html#L708'>key</a>               708 SqliteArray.php         if (self::_isNumericKey($key)) {</span>
+<span class='curline'><a href='../S/1.html#L709'>key</a>               709 SqliteArray.php             $key = intval($key);</span>
+<span class='curline'><a href='../S/1.html#L711'>key</a>               711 SqliteArray.php         return $key;</span>
+<span class='curline'><a href='../S/1.html#L720'>key</a>               720 SqliteArray.php     private static function _isNumericKey($key) {</span>
+<span class='curline'><a href='../S/1.html#L721'>key</a>               721 SqliteArray.php         return is_int($key) || is_bool($key) || is_float($key) || preg_match('/\A(:?0|[1-9][0-9]*)\Z/', $key);</span>
+</pre>
+</body>
+</html>

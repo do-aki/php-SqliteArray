@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>sth</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L196'>sth</a>               196 SqliteArray.php         $sth = $this-&gt;_executeQuery("SELECT `{$this-&gt;table_name}`.`key` FROM `{$this-&gt;table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L198'>sth</a>               198 SqliteArray.php         while ($row = $sth-&gt;fetch(PDO::FETCH_NUM)) {</span>
+<span class='curline'><a href='../S/1.html#L202'>sth</a>               202 SqliteArray.php         $sth-&gt;closeCursor();</span>
+<span class='curline'><a href='../S/1.html#L215'>sth</a>               215 SqliteArray.php         $sth = $this-&gt;_executeQuery("SELECT `{$this-&gt;table_name}`.`value` FROM `{$this-&gt;table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L216'>sth</a>               216 SqliteArray.php         while ($row = $sth-&gt;fetch(PDO::FETCH_NUM)) {</span>
+<span class='curline'><a href='../S/1.html#L220'>sth</a>               220 SqliteArray.php         $sth-&gt;closeCursor();</span>
+<span class='curline'><a href='../S/1.html#L299'>sth</a>               299 SqliteArray.php         $sth = $this-&gt;_executeQuery($sql, array(serialize($value)));</span>
+<span class='curline'><a href='../S/1.html#L300'>sth</a>               300 SqliteArray.php         $ret = $sth-&gt;fetch(PDO::FETCH_NUM);</span>
+<span class='curline'><a href='../S/1.html#L301'>sth</a>               301 SqliteArray.php         $sth-&gt;closeCursor();</span>
+<span class='curline'><a href='../S/1.html#L334'>sth</a>               334 SqliteArray.php         $sth = $this-&gt;_executeQuery("SELECT `key`,`value` FROM `{$this-&gt;table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L335'>sth</a>               335 SqliteArray.php         while ($row = $sth-&gt;fetch(PDO::FETCH_NUM)) {</span>
+<span class='curline'><a href='../S/1.html#L338'>sth</a>               338 SqliteArray.php         $sth-&gt;closeCursor();</span>
+<span class='curline'><a href='../S/1.html#L572'>sth</a>               572 SqliteArray.php         $sth = self::$sqlite-&gt;prepare($sql);</span>
+<span class='curline'><a href='../S/1.html#L573'>sth</a>               573 SqliteArray.php         $ret = $sth-&gt;execute($params);</span>
+<span class='curline'><a href='../S/1.html#L574'>sth</a>               574 SqliteArray.php         return $sth;</span>
+<span class='curline'><a href='../S/1.html#L610'>sth</a>               610 SqliteArray.php         $sth = $this-&gt;_executeQuery("SELECT `value` FROM `{$this-&gt;table_name}` WHERE `key` = ? LIMIT 1", array($key));</span>
+<span class='curline'><a href='../S/1.html#L611'>sth</a>               611 SqliteArray.php         $result = $sth-&gt;fetch(PDO::FETCH_NUM);</span>
+<span class='curline'><a href='../S/1.html#L615'>sth</a>               615 SqliteArray.php         $sth-&gt;closeCursor();</span>
+</pre>
+</body>
+</html>

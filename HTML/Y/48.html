@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>rhs</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L317'>rhs</a>               317 SqliteArray.php     public function intersectKey($rhs) {</span>
+<span class='curline'><a href='../S/1.html#L318'>rhs</a>               318 SqliteArray.php         if ($rhs instanceof self) {</span>
+<span class='curline'><a href='../S/1.html#L319'>rhs</a>               319 SqliteArray.php             return $this-&gt;_intersectKey($rhs);</span>
+<span class='curline'><a href='../S/1.html#L320'>rhs</a>               320 SqliteArray.php         } elseif (is_array($rhs)) {</span>
+<span class='curline'><a href='../S/1.html#L321'>rhs</a>               321 SqliteArray.php             return $this-&gt;_intersectKey_array($rhs);</span>
+<span class='curline'><a href='../S/1.html#L529'>rhs</a>               529 SqliteArray.php     private function _intersectKey($rhs) {</span>
+<span class='curline'><a href='../S/1.html#L534'>rhs</a>               534 SqliteArray.php             ." SELECT `{$this-&gt;table_name}`.`key`, `{$this-&gt;table_name}`.`value` FROM `{$this-&gt;table_name}`, `{$rhs-&gt;table_name}`"</span>
+<span class='curline'><a href='../S/1.html#L535'>rhs</a>               535 SqliteArray.php             ." WHERE `{$this-&gt;table_name}`.`key` = `{$rhs-&gt;table_name}`.`key`"</span>
+<span class='curline'><a href='../S/1.html#L546'>rhs</a>               546 SqliteArray.php     private function _intersectKey_array($rhs) {</span>
+<span class='curline'><a href='../S/1.html#L550'>rhs</a>               550 SqliteArray.php         foreach ($rhs as $k =&gt; $v) {</span>
+</pre>
+</body>
+</html>

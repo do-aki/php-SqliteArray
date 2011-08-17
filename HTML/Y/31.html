@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>iterator</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L91'>iterator</a>           91 SqliteArray.php     private $iterator;</span>
+<span class='curline'><a href='../S/1.html#L473'>iterator</a>          473 SqliteArray.php         $this-&gt;iterator_current = $this-&gt;iterator-&gt;fetch(PDO::FETCH_ASSOC);</span>
+<span class='curline'><a href='../S/1.html#L492'>iterator</a>          492 SqliteArray.php             $this-&gt;iterator-&gt;closeCursor();</span>
+<span class='curline'><a href='../S/1.html#L493'>iterator</a>          493 SqliteArray.php             $this-&gt;iterator = null;</span>
+<span class='curline'><a href='../S/1.html#L503'>iterator</a>          503 SqliteArray.php         if (isset($this-&gt;iterator)) {</span>
+<span class='curline'><a href='../S/1.html#L504'>iterator</a>          504 SqliteArray.php             $this-&gt;iterator-&gt;closeCursor();</span>
+<span class='curline'><a href='../S/1.html#L507'>iterator</a>          507 SqliteArray.php         $this-&gt;iterator = $this-&gt;_executeQuery("SELECT `key`,`value` FROM `{$this-&gt;table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L508'>iterator</a>          508 SqliteArray.php         $this-&gt;iterator_current = $this-&gt;iterator-&gt;fetch(PDO::FETCH_ASSOC);</span>
+</pre>
+</body>
+</html>

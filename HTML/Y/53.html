@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>self</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L115'>self</a>              115 SqliteArray.php         self::_prepareObject($this);</span>
+<span class='curline'><a href='../S/1.html#L119'>self</a>              119 SqliteArray.php             if (!isset(self::$temporary_directory)) {</span>
+<span class='curline'><a href='../S/1.html#L120'>self</a>              120 SqliteArray.php                 self::$temporary_directory = sys_get_temp_dir();</span>
+<span class='curline'><a href='../S/1.html#L122'>self</a>              122 SqliteArray.php             self::$file_name = tempnam(self::$temporary_directory, __CLASS__);</span>
+<span class='curline'><a href='../S/1.html#L123'>self</a>              123 SqliteArray.php             self::$sqlite = new PDO("sqlite:".self::$file_name);</span>
+<span class='curline'><a href='../S/1.html#L124'>self</a>              124 SqliteArray.php             self::$sqlite-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</span>
+<span class='curline'><a href='../S/1.html#L125'>self</a>              125 SqliteArray.php             self::$sqlite-&gt;beginTransaction();</span>
+<span class='curline'><a href='../S/1.html#L130'>self</a>              130 SqliteArray.php         self::$sqlite-&gt;exec("CREATE TABLE `{$this-&gt;table_name}` (`key` PRIMARY KEY, `value`)");</span>
+<span class='curline'><a href='../S/1.html#L146'>self</a>              146 SqliteArray.php             self::$sqlite = null;</span>
+<span class='curline'><a href='../S/1.html#L147'>self</a>              147 SqliteArray.php             unlink(self::$file_name);</span>
+<span class='curline'><a href='../S/1.html#L148'>self</a>              148 SqliteArray.php             self::$file_name = null;</span>
+<span class='curline'><a href='../S/1.html#L153'>self</a>              153 SqliteArray.php         self::$sqlite-&gt;exec("DROP TABLE `{$this-&gt;table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L177'>self</a>              177 SqliteArray.php         $key = self::_convertKey($key);</span>
+<span class='curline'><a href='../S/1.html#L193'>self</a>              193 SqliteArray.php         $new = new self();</span>
+<span class='curline'><a href='../S/1.html#L199'>self</a>              199 SqliteArray.php             $new[$index++] = self::_convertKey($row[0]);</span>
+<span class='curline'><a href='../S/1.html#L212'>self</a>              212 SqliteArray.php         $new = new self();</span>
+<span class='curline'><a href='../S/1.html#L231'>self</a>              231 SqliteArray.php         $key = self::_convertKey($key);</span>
+<span class='curline'><a href='../S/1.html#L251'>self</a>              251 SqliteArray.php         $this-&gt;_delete(self::_convertKey($key));</span>
+<span class='curline'><a href='../S/1.html#L263'>self</a>              263 SqliteArray.php             if (self::_isNumericKey($key)) {</span>
+<span class='curline'><a href='../S/1.html#L303'>self</a>              303 SqliteArray.php             return self::_convertKey($ret[0]);</span>
+<span class='curline'><a href='../S/1.html#L318'>self</a>              318 SqliteArray.php         if ($rhs instanceof self) {</span>
+<span class='curline'><a href='../S/1.html#L389'>self</a>              389 SqliteArray.php         $insert_sth = self::$sqlite-&gt;prepare("INSERT INTO `{$this-&gt;table_name}` (`key`,`value`) VALUES (?,?)");</span>
+<span class='curline'><a href='../S/1.html#L415'>self</a>              415 SqliteArray.php         $val = $this-&gt;_find(self::_convertKey($offset));</span>
+<span class='curline'><a href='../S/1.html#L482'>self</a>              482 SqliteArray.php         return self::_convertKey($this-&gt;iterator_current['key']);</span>
+<span class='curline'><a href='../S/1.html#L520'>self</a>              520 SqliteArray.php         self::$temporary_directory = $dirname;</span>
+<span class='curline'><a href='../S/1.html#L530'>self</a>              530 SqliteArray.php         $new = new self();</span>
+<span class='curline'><a href='../S/1.html#L547'>self</a>              547 SqliteArray.php         $new = new self();</span>
+<span class='curline'><a href='../S/1.html#L551'>self</a>              551 SqliteArray.php             $rhs_keys[] = self::_convertKey($k);</span>
+<span class='curline'><a href='../S/1.html#L572'>self</a>              572 SqliteArray.php         $sth = self::$sqlite-&gt;prepare($sql);</span>
+<span class='curline'><a href='../S/1.html#L687'>self</a>              687 SqliteArray.php     private static function _prepareObject($self) {</span>
+<span class='curline'><a href='../S/1.html#L688'>self</a>              688 SqliteArray.php         if (!isset(self::$root_object)) {</span>
+<span class='curline'><a href='../S/1.html#L689'>self</a>              689 SqliteArray.php             self::$root_object = false;</span>
+<span class='curline'><a href='../S/1.html#L690'>self</a>              690 SqliteArray.php             new self(); // ルートオブジェクトの生成 (コンストラクタを介して (*1) へ)</span>
+<span class='curline'><a href='../S/1.html#L691'>self</a>              691 SqliteArray.php         } elseif (!self::$root_object) {</span>
+<span class='curline'><a href='../S/1.html#L693'>self</a>              693 SqliteArray.php             self::$root_object = $self;</span>
+<span class='curline'><a href='../S/1.html#L698'>self</a>              698 SqliteArray.php         $self-&gt;table_name = self::TABLE_PREFIX . ++self::$object_counter;</span>
+<span class='curline'><a href='../S/1.html#L708'>self</a>              708 SqliteArray.php         if (self::_isNumericKey($key)) {</span>
+</pre>
+</body>
+</html>

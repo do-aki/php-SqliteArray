@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>value</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L132'>value</a>             132 SqliteArray.php             foreach ($array as $key =&gt; $value) {</span>
+<span class='curline'><a href='../S/1.html#L133'>value</a>             133 SqliteArray.php                 $this-&gt;_insert($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L163'>value</a>             163 SqliteArray.php     public function push($value) {</span>
+<span class='curline'><a href='../S/1.html#L164'>value</a>             164 SqliteArray.php         $this-&gt;_insert($this-&gt;_increaseIndex(), $value);</span>
+<span class='curline'><a href='../S/1.html#L176'>value</a>             176 SqliteArray.php     public function set($key, $value) {</span>
+<span class='curline'><a href='../S/1.html#L179'>value</a>             179 SqliteArray.php             $this-&gt;_update($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L181'>value</a>             181 SqliteArray.php             $this-&gt;_insert($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L184'>value</a>             184 SqliteArray.php         return $value;</span>
+<span class='curline'><a href='../S/1.html#L262'>value</a>             262 SqliteArray.php         foreach ($array as $key =&gt; $value) {</span>
+<span class='curline'><a href='../S/1.html#L264'>value</a>             264 SqliteArray.php                 $this-&gt;push($value);</span>
+<span class='curline'><a href='../S/1.html#L266'>value</a>             266 SqliteArray.php                 $this-&gt;set($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L281'>value</a>             281 SqliteArray.php            foreach ($array as $key =&gt; $value) {</span>
+<span class='curline'><a href='../S/1.html#L283'>value</a>             283 SqliteArray.php                 $this-&gt;_insert($key, $value);</span>
+<span class='curline'><a href='../S/1.html#L297'>value</a>             297 SqliteArray.php     public function searchValue($value) {</span>
+<span class='curline'><a href='../S/1.html#L299'>value</a>             299 SqliteArray.php         $sth = $this-&gt;_executeQuery($sql, array(serialize($value)));</span>
+<span class='curline'><a href='../S/1.html#L440'>value</a>             440 SqliteArray.php     public function offsetSet($offset, $value) {</span>
+<span class='curline'><a href='../S/1.html#L442'>value</a>             442 SqliteArray.php             $this-&gt;push($value);</span>
+<span class='curline'><a href='../S/1.html#L444'>value</a>             444 SqliteArray.php             $this-&gt;set($offset, $value);</span>
+<span class='curline'><a href='../S/1.html#L629'>value</a>             629 SqliteArray.php     private function _insert($key, $value) {</span>
+<span class='curline'><a href='../S/1.html#L630'>value</a>             630 SqliteArray.php         $value = serialize($value);</span>
+<span class='curline'><a href='../S/1.html#L631'>value</a>             631 SqliteArray.php         $this-&gt;_executeQuery("INSERT INTO `{$this-&gt;table_name}` (`key`,`value`) VALUES (?,?)", array($key, $value));</span>
+<span class='curline'><a href='../S/1.html#L644'>value</a>             644 SqliteArray.php     private function _update($key, $value) {</span>
+<span class='curline'><a href='../S/1.html#L645'>value</a>             645 SqliteArray.php         $value = serialize($value);</span>
+<span class='curline'><a href='../S/1.html#L646'>value</a>             646 SqliteArray.php         $this-&gt;_executeQuery("UPDATE `{$this-&gt;table_name}` SET `value`= ? WHERE `key` = ?", array($value, $key));</span>
+</pre>
+</body>
+</html>

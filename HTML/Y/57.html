@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>sqlite</title>
+<meta name='robots' content='noindex,nofollow' />
+<meta name='generator' content='GLOBAL-5.9.3' />
+<meta http-equiv='Content-Style-Type' content='text/css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
+</head>
+<body>
+<pre>
+<span class='curline'><a href='../S/1.html#L60'>sqlite</a>             60 SqliteArray.php     private static $sqlite;</span>
+<span class='curline'><a href='../S/1.html#L123'>sqlite</a>            123 SqliteArray.php             self::$sqlite = new PDO("sqlite:".self::$file_name);</span>
+<span class='curline'><a href='../S/1.html#L124'>sqlite</a>            124 SqliteArray.php             self::$sqlite-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</span>
+<span class='curline'><a href='../S/1.html#L125'>sqlite</a>            125 SqliteArray.php             self::$sqlite-&gt;beginTransaction();</span>
+<span class='curline'><a href='../S/1.html#L130'>sqlite</a>            130 SqliteArray.php         self::$sqlite-&gt;exec("CREATE TABLE `{$this-&gt;table_name}` (`key` PRIMARY KEY, `value`)");</span>
+<span class='curline'><a href='../S/1.html#L146'>sqlite</a>            146 SqliteArray.php             self::$sqlite = null;</span>
+<span class='curline'><a href='../S/1.html#L153'>sqlite</a>            153 SqliteArray.php         self::$sqlite-&gt;exec("DROP TABLE `{$this-&gt;table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L359'>sqlite</a>            359 SqliteArray.php         $sqlite = new PDO("sqlite:{$file_name}");</span>
+<span class='curline'><a href='../S/1.html#L360'>sqlite</a>            360 SqliteArray.php         $sqlite-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</span>
+<span class='curline'><a href='../S/1.html#L361'>sqlite</a>            361 SqliteArray.php         $sqlite-&gt;exec("CREATE TABLE `{$table_name}` (`key` PRIMARY KEY, `value`)");</span>
+<span class='curline'><a href='../S/1.html#L362'>sqlite</a>            362 SqliteArray.php         $sqlite-&gt;beginTransaction();</span>
+<span class='curline'><a href='../S/1.html#L363'>sqlite</a>            363 SqliteArray.php         $insert_sth = $sqlite-&gt;prepare("INSERT INTO `{$table_name}` (`key`,`value`) VALUES (?,?)");</span>
+<span class='curline'><a href='../S/1.html#L371'>sqlite</a>            371 SqliteArray.php         $sqlite-&gt;commit();</span>
+<span class='curline'><a href='../S/1.html#L372'>sqlite</a>            372 SqliteArray.php         $sqlite = null;</span>
+<span class='curline'><a href='../S/1.html#L385'>sqlite</a>            385 SqliteArray.php         $sqlite = new PDO("sqlite:{$file_name}");</span>
+<span class='curline'><a href='../S/1.html#L386'>sqlite</a>            386 SqliteArray.php         $sqlite-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);</span>
+<span class='curline'><a href='../S/1.html#L387'>sqlite</a>            387 SqliteArray.php         $select_sth = $sqlite-&gt;query("SELECT `key`,`value` FROM `{$table_name}`");</span>
+<span class='curline'><a href='../S/1.html#L389'>sqlite</a>            389 SqliteArray.php         $insert_sth = self::$sqlite-&gt;prepare("INSERT INTO `{$this-&gt;table_name}` (`key`,`value`) VALUES (?,?)");</span>
+<span class='curline'><a href='../S/1.html#L396'>sqlite</a>            396 SqliteArray.php         $sqlite = null;</span>
+<span class='curline'><a href='../S/1.html#L572'>sqlite</a>            572 SqliteArray.php         $sth = self::$sqlite-&gt;prepare($sql);</span>
+</pre>
+</body>
+</html>
